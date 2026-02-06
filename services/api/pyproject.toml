@@ -1,0 +1,49 @@
+[project]
+name = "flux-watch-api"
+version = "0.1.0"
+description = ""
+authors = [
+    { name = "cxc" }
+]
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "fastapi (>=0.128.2,<0.129.0)",
+    "uvicorn (>=0.40.0,<0.41.0)",
+    "dependency-injector (>=4.48.3,<5.0.0)"
+]
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[dependency-groups]
+dev = [
+    "black (>=26.1.0,<27.0.0)",
+    "ruff (>=0.15.0,<0.16.0)",
+    "pre-commit (>=4.5.1,<5.0.0)"
+]
+
+[tool.black]
+line-length = 88
+target-version = ['py39']
+include = '\.pyi?$'
+
+
+[tool.ruff]
+line-length = 88
+target-version = "py310"
+
+[tool.ruff.lint]
+# E: pycodestyle errors (Flake8)
+# F: Pyflakes (Flake8)
+# I: isort
+select = ["E", "F", "I"]
+# Optional: Add "B" for flake8-bugbear and "UP" for pyupgrade
+extend-select = ["B", "UP"]
+
+[tool.ruff.format]
+# Enable Black-compatible formatting (on by default)
+quote-style = "double"
+indent-style = "space"
