@@ -9,6 +9,7 @@ def get_env(name: str, default=None):
 
 class AppConfig:
     PG_URL = get_env("PG_URL", "postgresql://postgres:postgres@localhost:5432/postgres")
+    API_PREFIX = get_env("API_PREFIX", "/api/v1")
 
     LOGGING_CONFIG = {
         "version": 1,
