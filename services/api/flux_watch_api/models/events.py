@@ -3,6 +3,7 @@ from typing import Any, Literal
 from uuid import UUID, uuid4
 
 from pydantic import BaseModel, Field, model_validator
+from services.api.flux_watch_api.schema.events import EventORM
 
 # Predetermined entity types for mvp
 EntityType = Literal["user", "order", "system", "session"]
@@ -32,36 +33,46 @@ class EventContext(BaseModel):
     source: str | None  # e.g., "web", "mobile", "system"
 
 
-class EventPayload(BaseModel):
-    __root__: dict[str, Any]  # Generic payload; can validate per event_type later
-
-
-class Event(BaseModel):
-    event_id: UUID = Field(default_factory=uuid4)
+class EventCreate(BaseModel):
     entity: EventEntity
     event_type: str
-    event_version: int = 1
-    occurred_at: datetime = Field(default_factory=datetime.utcnow)
-    producer: str  # service emitting the event
+    producer: str
     actor: EventActor | None = None
     context: EventContext | None = None
-    payload: EventPayload = Field(default_factory=dict)
+    payload: dict[str, Any] = Field(default_factory=dict)
 
-    # Ensure event_type matches entity.type
     @model_validator(mode="after")
-    def validate_event_type(cls, values):
-        entity = values.get("entity")
-        event_type = values.get("event_type")
-        if entity and event_type:
-            valid_types = EVENT_TYPES.get(entity.type)
-            if not valid_types or event_type not in valid_types:
-                raise ValueError(
-                    f"Invalid event_type '{event_type}' for entity_type '{entity.type}'"
-                )
-        return values
+    def validate_event_type(self):
+        valid_types = EVENT_TYPES.get(self.entity.type)
+        if not valid_types or self.event_type not in valid_types:
+            raise ValueError(
+                f"Invalid event_type '{self.event_type}' for entity_type '{self.entity.type}'"
+            )
+        return self
+
+
+class Event(EventCreate):
+    event_id: UUID = Field(default_factory=uuid4)
+    occurred_at: datetime = Field(default_factory=datetime.utcnow)
+    event_version: int = 1
+
+    def serealize(self) -> EventORM:
+        return EventORM(
+            event_id=self.event_id,
+            entity_type=self.entity.type,
+            entity_id=self.entity.id,
+            event_type=self.event_type,
+            event_version=self.event_version,
+            occurred_at=self.occurred_at,
+            producer=self.producer,
+            actor_type=self.actor.type if self.actor else None,
+            actor_id=self.actor.id if self.actor else None,
+            context=self.context.model_dump() if self.context else None,
+            payload=self.payload,
+        )
 
     class Config:
-        schema_extra = {
+        json_schema_extra = {
             "example": {
                 "event_id": "uuid",
                 "entity": {"type": "user", "id": "USR_1"},

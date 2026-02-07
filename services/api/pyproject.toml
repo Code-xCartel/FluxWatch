@@ -15,7 +15,8 @@ dependencies = [
     "sqlalchemy (>=2.0.46,<3.0.0)",
     "alembic (>=1.18.3,<2.0.0)",
     "python-dotenv (>=1.2.1,<2.0.0)",
-    "pydantic-settings (>=2.12.0,<3.0.0)"
+    "pydantic-settings (>=2.12.0,<3.0.0)",
+    "psycopg2-binary (>=2.9.11,<3.0.0)"
 ]
 
 
@@ -37,8 +38,9 @@ include = '\.pyi?$'
 
 
 [tool.ruff]
-line-length = 88
+line-length = 100
 target-version = "py310"
+ignore = ["B008"]
 
 [tool.ruff.lint]
 # E: pycodestyle errors (Flake8)
