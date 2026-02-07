@@ -1,9 +1,9 @@
 import logging
-import os
 from collections.abc import Generator
 from enum import Enum
 from typing import Any
 
+from services.api.flux_watch_api.core.config import get_env
 from sqlalchemy import create_engine, orm
 
 logger = logging.getLogger(__name__)
@@ -18,11 +18,18 @@ class DatabaseConnectionConfig(Enum):
     }
 
 
-engine = create_engine(os.environ["PG_URL"], **DatabaseConnectionConfig.API.value)
-logger.info("Initialized Postgres Engine.")
+_engine = None
+
+
+def _get_engine():
+    global _engine
+    if _engine is None:
+        _engine = create_engine(get_env("PG_URL"), **DatabaseConnectionConfig.API.value)
+        logger.info("Initialized Postgres Engine.")
+    return _engine
+
 
 SessionLocal = orm.sessionmaker(
-    bind=engine,
     autocommit=False,
     autoflush=False,
     expire_on_commit=False,
@@ -30,7 +37,7 @@ SessionLocal = orm.sessionmaker(
 
 
 def get_session() -> Generator[orm.Session, Any, None]:
-    session = SessionLocal()
+    session = SessionLocal(bind=_get_engine())
     try:
         yield session
         session.commit()
