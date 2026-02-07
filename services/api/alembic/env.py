@@ -5,10 +5,10 @@ import os
 from logging.config import fileConfig
 
 from dotenv import load_dotenv
-from services.api.flux_watch_api.database.base import Base
 from sqlalchemy import engine_from_config, pool
 
 from alembic import context
+from flux_watch_api.database.base import Base
 
 load_dotenv()
 

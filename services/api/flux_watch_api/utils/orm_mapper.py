@@ -1,10 +1,10 @@
-from services.api.flux_watch_api.models.events import (
+from flux_watch_api.models.events import (
     Event,
     EventActor,
     EventContext,
     EventEntity,
 )
-from services.api.flux_watch_api.schema.events import EventORM
+from flux_watch_api.schema.events import EventORM
 
 
 # need this mapper since adding Event based deserialization causes circular dependency

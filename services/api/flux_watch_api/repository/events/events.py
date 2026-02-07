@@ -1,8 +1,9 @@
 from fastapi import Depends
-from services.api.flux_watch_api.core.base_repository import Repository
-from services.api.flux_watch_api.models.events import Event
-from services.api.flux_watch_api.schema.events import EventORM
-from services.api.flux_watch_api.utils.orm_mapper import deserialize_events
+
+from flux_watch_api.core.base_repository import Repository
+from flux_watch_api.models.events import Event
+from flux_watch_api.schema.events import EventORM
+from flux_watch_api.utils.orm_mapper import deserialize_events
 
 
 class EventsRepository:

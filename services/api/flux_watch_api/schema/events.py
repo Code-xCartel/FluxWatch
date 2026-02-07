@@ -3,10 +3,11 @@ from typing import Any
 from uuid import UUID as UUIDType
 from uuid import uuid4
 
-from services.api.flux_watch_api.database.base import Base
 from sqlalchemy import TIMESTAMP, Integer, Text
 from sqlalchemy.dialects.postgresql import JSONB, UUID
 from sqlalchemy.orm import Mapped, mapped_column
+
+from flux_watch_api.database.base import Base
 
 
 class EventORM(Base):
