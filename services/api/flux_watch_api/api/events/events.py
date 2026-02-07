@@ -1,7 +1,8 @@
 from fastapi import APIRouter, Depends
-from services.api.flux_watch_api.models.events import Event, EventCreate
-from services.api.flux_watch_api.repository.events.events import EventsRepository
 from starlette import status
+
+from flux_watch_api.models.events import Event, EventCreate
+from flux_watch_api.repository.events.events import EventsRepository
 
 events_router = APIRouter()
 

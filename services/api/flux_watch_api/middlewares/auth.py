@@ -1,8 +1,9 @@
-from services.api.flux_watch_api.core.config import AppConfig
-from services.api.flux_watch_api.database.session import get_session
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.requests import Request
 from starlette.responses import Response
+
+from flux_watch_api.core.config import AppConfig
+from flux_watch_api.database.session import get_session
 
 
 class AuthMiddleware(BaseHTTPMiddleware):

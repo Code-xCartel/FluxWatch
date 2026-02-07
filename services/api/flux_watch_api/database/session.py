@@ -3,8 +3,9 @@ from collections.abc import Generator
 from enum import Enum
 from typing import Any
 
-from services.api.flux_watch_api.core.config import get_env
 from sqlalchemy import create_engine, orm
+
+from flux_watch_api.core.config import get_env
 
 logger = logging.getLogger(__name__)
 

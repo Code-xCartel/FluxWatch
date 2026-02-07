@@ -1,7 +1,7 @@
 from collections.abc import Callable
 from typing import Any
 
-from services.api.flux_watch_api.core.class_helper import Singleton
+from flux_watch_api.core.class_helper import Singleton
 
 
 class AppRegistry(metaclass=Singleton):

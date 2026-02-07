@@ -1,9 +1,10 @@
 from typing import Any, TypeVar
 
 from fastapi import Depends
-from services.api.flux_watch_api.database.session import get_session
 from sqlalchemy import select
 from sqlalchemy.orm import Session
+
+from flux_watch_api.database.session import get_session
 
 T = TypeVar("T")
 

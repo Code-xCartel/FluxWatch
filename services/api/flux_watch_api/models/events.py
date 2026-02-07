@@ -3,7 +3,8 @@ from typing import Any, Literal
 from uuid import UUID, uuid4
 
 from pydantic import BaseModel, Field, model_validator
-from services.api.flux_watch_api.schema.events import EventORM
+
+from flux_watch_api.schema.events import EventORM
 
 # Predetermined entity types for mvp
 EntityType = Literal["user", "order", "system", "session"]

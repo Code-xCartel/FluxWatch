@@ -1,10 +1,11 @@
 from typing import Any
 
 from fastapi import Depends
-from services.api.flux_watch_api.core.config import AppConfig
-from services.api.flux_watch_api.core.registry import registry
-from services.api.flux_watch_api.database.client import SQLClient
 from starlette.requests import Request
+
+from flux_watch_api.core.config import AppConfig
+from flux_watch_api.core.registry import registry
+from flux_watch_api.database.client import SQLClient
 
 
 def get_user(request: Request) -> dict:
