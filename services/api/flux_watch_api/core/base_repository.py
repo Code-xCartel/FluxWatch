@@ -26,3 +26,6 @@ class Repository:
 
     def get_one(self, *args, **kwargs):
         return self._client.get_one(*args, **kwargs)
+
+    def get_many(self, *args, **kwargs):
+        return self._client.get_many(*args, **kwargs)

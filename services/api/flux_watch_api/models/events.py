@@ -2,8 +2,9 @@ from datetime import datetime
 from typing import Any, Literal
 from uuid import UUID, uuid4
 
-from pydantic import BaseModel, Field, model_validator
+from pydantic import Field, model_validator
 
+from flux_watch_api.models.base import APIModel
 from flux_watch_api.schema.events import EventORM
 
 # Predetermined entity types for mvp
@@ -18,23 +19,23 @@ EVENT_TYPES = {
 }
 
 
-class EventEntity(BaseModel):
+class EventEntity(APIModel):
     type: EntityType
     id: str
 
 
-class EventActor(BaseModel):
+class EventActor(APIModel):
     type: str | None
     id: str | None
 
 
-class EventContext(BaseModel):
+class EventContext(APIModel):
     trace_id: str | None
     session_id: str | None
     source: str | None  # e.g., "web", "mobile", "system"
 
 
-class EventCreate(BaseModel):
+class EventCreate(APIModel):
     entity: EventEntity
     event_type: str
     producer: str
