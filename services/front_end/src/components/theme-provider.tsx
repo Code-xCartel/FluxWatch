@@ -1,9 +1,10 @@
-import { createContext, useContext, useEffect, useState } from "react"
+import { createContext, type ReactNode, useContext, useEffect, useState } from "react"
+import type {THEME} from "@/constants.ts";
 
-type Theme = "dark" | "light" | "system"
+export type Theme = (typeof THEME)[keyof typeof THEME];
 
 type ThemeProviderProps = {
-    children: React.ReactNode
+    children: ReactNode
     defaultTheme?: Theme
     storageKey?: string
 }
