@@ -1,9 +1,9 @@
 from starlette.middleware.cors import CORSMiddleware
 
-from flux_watch_api.api.routes import router
 from flux_watch_api.core.app import App
 from flux_watch_api.core.config import AppConfig
 from flux_watch_api.core.registry import registry
+from flux_watch_api.routes.routes import router
 
 # from services.api.flux_watch_api.middlewares.auth import AuthMiddleware
 

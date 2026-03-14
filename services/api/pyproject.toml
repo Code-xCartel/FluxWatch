@@ -40,7 +40,6 @@ include = '\.pyi?$'
 [tool.ruff]
 line-length = 100
 target-version = "py310"
-ignore = ["B008"]
 
 [tool.ruff.lint]
 # E: pycodestyle errors (Flake8)
@@ -49,6 +48,7 @@ ignore = ["B008"]
 select = ["E", "F", "I"]
 # Optional: Add "B" for flake8-bugbear and "UP" for pyupgrade
 extend-select = ["B", "UP"]
+ignore = ["B008"]
 
 [tool.ruff.format]
 # Enable Black-compatible formatting (on by default)
