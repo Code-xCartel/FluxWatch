@@ -1,7 +1,7 @@
 import type {FC, ReactNode} from "react";
 import RootLayout from "@/components/layout/RootLayout.tsx";
 
-type AuthLayoutOwnProps = {
+interface AuthLayoutOwnProps {
     children: ReactNode
 }
 

@@ -1,11 +1,11 @@
 import {type FC, type ReactNode} from "react";
 import {ModeToggle} from "@/components/mode-toggle.tsx";
 
-interface AuthLayoutOwnProps {
+interface RootLayoutOwnProps {
     children: ReactNode;
 }
 
-const RootLayout: FC<AuthLayoutOwnProps> = ({ children }) => {
+const RootLayout: FC<RootLayoutOwnProps> = ({ children }) => {
     return (
         <div className="relative h-screen">
             <ModeToggle/>
