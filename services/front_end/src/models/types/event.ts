@@ -6,14 +6,13 @@ type EventEntity = {
 type EventActor = {
   type: string;
   id: string;
-} | null;
+};
 
 type EventContext = {
   traceId?: string | null;
   sessionId?: string | null;
   source?: string | null;
-  [key: string]: any;
-} | null;
+}
 
 type Event = {
   eventId: string;
@@ -37,4 +36,4 @@ type EventsResponse = {
   meta: any | null;
 };
 
-export type { EventsQuery, EventsResponse };
+export type { Event, EventsQuery, EventsResponse };
