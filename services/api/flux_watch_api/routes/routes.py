@@ -1,7 +1,7 @@
 from fastapi import APIRouter
 
-from flux_watch_api.api.events.events import events_router
-from flux_watch_api.api.health_check.health_check import (
+from flux_watch_api.routes.events.events import events_router
+from flux_watch_api.routes.health_check.health_check import (
     health_check_router,
 )
 

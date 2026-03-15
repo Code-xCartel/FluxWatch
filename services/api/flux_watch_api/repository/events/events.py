@@ -1,12 +1,18 @@
 from fastapi import Depends
 
 from flux_watch_api.core.base_repository import Repository
+from flux_watch_api.core.registry import registry
 from flux_watch_api.database.query_builder.base import QueryModel
 from flux_watch_api.database.query_builder.features import FilterFeature, ModelFeature
+from flux_watch_api.database.redis import Redis
 from flux_watch_api.models.events import Event
 from flux_watch_api.models.response_schema import ListResponse, Meta
 from flux_watch_api.schema.events import EventORM
+from flux_watch_api.utils.constants import REDIS_EVENT_PROCESSOR_KEY
 from flux_watch_api.utils.orm_mapper import deserialize_events
+
+BUFFER_SIZE = 10
+CACHE_BUFFER = []
 
 
 class EventsSearch(QueryModel):
@@ -24,6 +30,11 @@ class EventsRepository:
         self.repo = repo
 
     def ingest_event(self, event: Event):
+        # use redis, but only push in bulk since there are only 100ops/sec on free tier
+        CACHE_BUFFER.append(str(event.event_id))
+        if len(CACHE_BUFFER) >= BUFFER_SIZE:
+            redis: Redis = registry.resolve(Redis)
+            redis.client.rpush(REDIS_EVENT_PROCESSOR_KEY, *CACHE_BUFFER)
         return self.repo.add_one(event.serealize())
 
     def get_event_by_id(self, event_id: str) -> Event:

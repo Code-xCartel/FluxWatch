@@ -1,5 +1,8 @@
+import logging.config
+
 from starlette.middleware.cors import CORSMiddleware
 
+from flux_watch_api.common_deps import register_common_deps
 from flux_watch_api.core.app import App
 from flux_watch_api.core.config import AppConfig
 from flux_watch_api.core.registry import registry
@@ -21,10 +24,13 @@ def create_app() -> App:
         config=_config,
     )
 
+    logging.config.dictConfig(_app.config.LOGGING_CONFIG)
+    register_common_deps(app=_app)
+
     _app.add_middleware(
         CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"]
     )
     # _app.add_middleware(AuthMiddleware, app=_app, app_config=_config)
-    _app.include_router(router=router, prefix=_config.API_PREFIX)
+    _app.include_router(router=router, prefix=_app.config.API_PREFIX)
 
     return _app
