@@ -16,6 +16,7 @@ def sign_up(account: AccountCreate, auth_manager: AuthManager = Depends()):
         email=account.email,
         password=account.password,
     )
+    ## send email for account activation
     return MessageResponse(msg="Account created successfully")
 
 

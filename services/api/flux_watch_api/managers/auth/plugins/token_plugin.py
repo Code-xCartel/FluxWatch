@@ -2,10 +2,12 @@ from datetime import datetime
 
 from flux_watch_api.core.base_repository import Repository
 from flux_watch_api.errors.rest_errors import UnauthorizedError
-from flux_watch_api.managers.auth.plugins.abstract import AccountSearch, Plugin
-from flux_watch_api.managers.auth.plugins.builder import Scheme
+from flux_watch_api.managers.auth.plugins.abstract import Plugin
+from flux_watch_api.models.auth import Scheme
+from flux_watch_api.models.common import AccountSearch
+from flux_watch_api.models.user import AuthUser
 from flux_watch_api.schema import AccountORM, AccountSessionORM
-from flux_watch_api.utils.auth import AuthUser, AuthUtils
+from flux_watch_api.utils.auth import AuthUtils
 from flux_watch_api.utils.utilities import extract_auth_user
 
 

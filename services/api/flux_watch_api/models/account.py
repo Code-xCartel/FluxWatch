@@ -5,7 +5,6 @@ from uuid import UUID
 from pydantic import Field, field_validator
 
 from flux_watch_api.models.base import APIModel
-from flux_watch_api.utils.auth import AuthUtils
 
 EMAIL_REGEX = re.compile(r"^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$")
 
@@ -36,10 +35,6 @@ class Account(APIModel):
 
 
 class AccountSession(APIModel):
-    access_token: str | None
+    access_token: str
     ttl: datetime.datetime
     account: Account
-
-    def enrich(self, session, auth_utils: AuthUtils):
-        self.access_token = auth_utils.make_token(_id=session.id, account=session.account)
-        return self

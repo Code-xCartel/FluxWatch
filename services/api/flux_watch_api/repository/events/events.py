@@ -8,6 +8,7 @@ from flux_watch_api.database.redis import Redis
 from flux_watch_api.models.events import Event
 from flux_watch_api.models.response_schema import ListResponse, Meta
 from flux_watch_api.schema.events import EventORM
+from flux_watch_api.schema.utils.meta import MetaFields
 from flux_watch_api.utils.constants import REDIS_EVENT_PROCESSOR_KEY
 from flux_watch_api.utils.orm_mapper import deserialize_events
 
@@ -18,7 +19,7 @@ CACHE_BUFFER = []
 class EventsSearch(QueryModel):
     features = [
         ModelFeature(EventORM),
-        FilterFeature("event_id"),
+        FilterFeature(field=MetaFields.ID),
     ]
 
     default_ordering = ["-occurred_at"]

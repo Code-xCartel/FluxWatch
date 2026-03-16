@@ -1,19 +1,11 @@
 import base64
 import uuid
-from dataclasses import dataclass
 from datetime import datetime, timedelta
 
 import bcrypt
 
-from flux_watch_api.managers.auth.plugins.builder import Scheme
+from flux_watch_api.models.account import AccountSession
 from flux_watch_api.schema import AccountORM, AccountSessionORM
-
-
-@dataclass
-class AuthUser:
-    auth_scheme: Scheme
-    credentials: str
-    principal: str
 
 
 class AuthUtils:
@@ -43,3 +35,14 @@ class AuthUtils:
             ttl=self.make_ttl(ttl_days),
             account=account,
         )
+
+    def enrich_session(self, session: AccountSessionORM) -> AccountSession:
+        access_token = self.make_token(_id=session.id, account=session.account)
+        session_data = {
+            "access_token": access_token,
+            "ttl": session.ttl,
+            "account": session.account,
+        }
+        account_session = AccountSession.model_validate(session_data)
+
+        return account_session

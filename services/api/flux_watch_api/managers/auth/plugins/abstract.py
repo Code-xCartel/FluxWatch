@@ -1,16 +1,7 @@
 import abc
 
-from flux_watch_api.database.query_builder.base import QueryModel
-from flux_watch_api.database.query_builder.features import FilterFeature, ModelFeature
-from flux_watch_api.schema import AccountORM, AccountSessionORM
-from flux_watch_api.utils.auth import AuthUser
-
-
-class AccountSearch(QueryModel):
-    features = [
-        ModelFeature(AccountORM),
-        FilterFeature("principal"),
-    ]
+from flux_watch_api.models.user import AuthUser
+from flux_watch_api.schema import AccountSessionORM
 
 
 class Plugin(abc.ABC):
@@ -19,5 +10,5 @@ class Plugin(abc.ABC):
         raise NotImplementedError
 
     @abc.abstractmethod
-    def extract(self, cred: str):
+    def extract(self, cred: str) -> AuthUser:
         raise NotImplementedError

@@ -2,12 +2,13 @@ import logging
 from typing import TypeVar
 
 from sqlalchemy.exc import IntegrityError
-from sqlalchemy.orm import DeclarativeBase, Session
+from sqlalchemy.orm import Session
 
 from flux_watch_api.database.query_builder.base import QueryModel
 from flux_watch_api.database.query_builder.builder import QueryBuilder
 from flux_watch_api.database.session import InjectSession
 from flux_watch_api.errors.rest_errors import AlreadyExistsError, NotFoundError
+from flux_watch_api.schema.utils.base import Base
 
 T = TypeVar("T")
 
@@ -18,8 +19,8 @@ class SQLClient:
     def __init__(self, session: Session = InjectSession()):
         self.session = session
 
-    def add_one(self, obj: DeclarativeBase):
-        if not isinstance(obj, DeclarativeBase):
+    def add_one(self, obj: Base):
+        if not isinstance(obj, Base):
             raise TypeError("obj must be a DeclarativeBase")
         try:
             self.session.add(obj)
@@ -46,7 +47,13 @@ class SQLClient:
         total_count = self.session.execute(count_query).scalar_one()
         return rows, total_count
 
-    def delete_one(self, obj: DeclarativeBase):
-        if not isinstance(obj, DeclarativeBase):
+    def delete_one(self, obj: Base, archive=True):
+        if not isinstance(obj, Base):
             raise TypeError("obj must be a DeclarativeBase")
-        self.session.delete(obj)
+        if not archive:
+            self.session.delete(obj)
+        else:
+            if hasattr(obj, "expired"):
+                obj.expired = True
+            else:
+                raise AttributeError("obj does not have 'expired' field")

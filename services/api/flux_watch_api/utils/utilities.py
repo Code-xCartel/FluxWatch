@@ -1,8 +1,8 @@
 import base64
 
 from flux_watch_api.errors.rest_errors import UnauthorizedError
-from flux_watch_api.managers.auth.plugins.builder import Scheme
-from flux_watch_api.utils.auth import AuthUser
+from flux_watch_api.models.auth import Scheme
+from flux_watch_api.models.user import AuthUser
 
 
 def extract_auth_user(scheme: Scheme, encoded: str) -> AuthUser:
