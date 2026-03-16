@@ -3,9 +3,10 @@ from collections.abc import Generator
 from enum import Enum
 from typing import Any
 
+from fastapi import Depends
 from sqlalchemy import create_engine, orm
 
-from flux_watch_api.core.config import get_env
+from flux_watch_api.core.registry import registry
 
 logger = logging.getLogger(__name__)
 
@@ -19,31 +20,34 @@ class DatabaseConnectionConfig(Enum):
     }
 
 
-_engine = None
+class Database:
+    def __init__(self, url: str, config: DatabaseConnectionConfig):
+        try:
+            self.engine = create_engine(url, **config.value)
+            logger.info("Initialized Postgres Engine.")
+        except Exception as e:
+            logger.error("Failed to initialize Postgres Engine: " + str(e))
+
+        self.session_local = orm.sessionmaker(
+            autocommit=False, autoflush=False, bind=self.engine, expire_on_commit=False
+        )
+
+    def get_session(self) -> Generator[orm.Session, Any, None]:
+        session = self.session_local()
+        try:
+            yield session
+            session.commit()
+        except Exception as e:
+            session.rollback()
+            raise e
+        finally:
+            session.close()
 
 
-def _get_engine():
-    global _engine
-    if _engine is None:
-        _engine = create_engine(get_env("PG_URL"), **DatabaseConnectionConfig.API.value)
-        logger.info("Initialized Postgres Engine.")
-    return _engine
+# hack
+def InjectSession():
+    def _session():
+        db = registry.resolve(Database)
+        yield from db.get_session()
 
-
-SessionLocal = orm.sessionmaker(
-    autocommit=False,
-    autoflush=False,
-    expire_on_commit=False,
-)
-
-
-def get_session() -> Generator[orm.Session, Any, None]:
-    session = SessionLocal(bind=_get_engine())
-    try:
-        yield session
-        session.commit()
-    except Exception as e:
-        session.rollback()
-        raise e
-    finally:
-        session.close()
+    return Depends(_session)

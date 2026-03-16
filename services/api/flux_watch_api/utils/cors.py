@@ -7,13 +7,4 @@ ALLOWED_HEADERS = [
     "DNT",
     "If-Modified-Since",
     "Keep-Alive",
-    "User-Agent,X-Requested-With",
-    "X-Token",
-    "X-Proxy-User",
-    "X-Session-Token",
-    "X-Realm",
-    "X-Real-IP",
-    "X-Forwarded-For",
-    "X-Email",
-    "x-email",
 ]
