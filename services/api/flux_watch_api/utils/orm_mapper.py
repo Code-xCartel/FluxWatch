@@ -10,11 +10,11 @@ from flux_watch_api.schema.events import EventORM
 # need this mapper since adding Event based deserialization causes circular dependency
 def deserialize_events(obj: EventORM) -> Event:
     return Event(
-        event_id=obj.event_id,
+        event_id=obj.id,
         entity=EventEntity(type=obj.entity_type, id=obj.entity_id),
         event_type=obj.event_type,
         event_version=obj.event_version,
-        occurred_at=obj.occurred_at,
+        occurred_at=obj.created_at,
         producer=obj.producer,
         actor=EventActor(type=obj.actor_type, id=obj.actor_id)
         if obj.actor_type or obj.actor_id

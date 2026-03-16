@@ -1,6 +1,6 @@
 from datetime import datetime
 from typing import Any, Literal
-from uuid import UUID, uuid4
+from uuid import UUID
 
 from pydantic import Field, model_validator
 
@@ -54,18 +54,16 @@ class EventCreate(APIModel):
 
 
 class Event(EventCreate):
-    event_id: UUID = Field(default_factory=uuid4)
-    occurred_at: datetime = Field(default_factory=datetime.utcnow)
+    event_id: UUID
+    occurred_at: datetime
     event_version: int = 1
 
     def serealize(self) -> EventORM:
         return EventORM(
-            event_id=self.event_id,
             entity_type=self.entity.type,
             entity_id=self.entity.id,
             event_type=self.event_type,
             event_version=self.event_version,
-            occurred_at=self.occurred_at,
             producer=self.producer,
             actor_type=self.actor.type if self.actor else None,
             actor_id=self.actor.id if self.actor else None,

@@ -43,7 +43,7 @@ class FilterFeature(QueryFeature):
 
         column = getattr(model, self.field, None)
         if column is None:
-            return query
+            raise Exception(f"No column named {self.field} on model {model}")
 
         for key, value in params.items():
             if not key.startswith(self.param_prefix):

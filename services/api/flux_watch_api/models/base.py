@@ -12,3 +12,12 @@ class APIModel(BaseModel):
         populate_by_name=True,  # allow snake_case input too
         extra="forbid",  # ideal, but can be overridden in child class
     )
+
+    def get_orm(self):
+        return f"{self.__name__}ORM"
+
+    def to_dict(self):
+        d = {}
+        for k, v in self.__dict__.items():
+            d[k] = v
+        return d

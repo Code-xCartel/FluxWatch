@@ -13,3 +13,7 @@ class Meta(APIModel):
 class ListResponse(APIModel, Generic[T]):
     meta: Meta
     results: list[T]
+
+
+class MessageResponse(APIModel):
+    msg: str

@@ -1,5 +1,6 @@
 from sqlalchemy import func, select
 
+from flux_watch_api.database.query_builder.base import QueryFeature
 from flux_watch_api.database.query_builder.processor import Pagination, Sorting
 
 
@@ -19,6 +20,8 @@ class QueryBuilder:
     def _build_base(self):
         query = None
         for feature in self.schema.features:
+            if not isinstance(feature, QueryFeature):
+                raise TypeError(f"Feature {feature} is not a QueryFeature")
             query = feature.apply(query, self.context)
         return query
 
