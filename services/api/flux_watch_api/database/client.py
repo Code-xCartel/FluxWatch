@@ -49,11 +49,11 @@ class SQLClient:
 
     def delete_one(self, obj: Base, archive=True):
         if not isinstance(obj, Base):
-            raise TypeError("obj must be a DeclarativeBase")
+            raise TypeError(f"{obj.__name__} must be a DeclarativeBase")
         if not archive:
             self.session.delete(obj)
         else:
             if hasattr(obj, "expired"):
                 obj.expired = True
             else:
-                raise AttributeError("obj does not have 'expired' field")
+                raise AttributeError(f"{obj.__name__} does not have 'expired' field")
