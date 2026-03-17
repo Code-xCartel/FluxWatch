@@ -35,20 +35,20 @@ class AuthManager:
         auth_user = plugin.extract(cred=creds)
         return auth_user, plugin
 
-    def _authenticate(self, auth_header: str) -> AccountSessionORM:
+    def _authenticate(self, auth_header: str, skip_active_check=False) -> AccountSessionORM:
         auth_user, plugin = self._build_auth_user(auth_header=auth_header)
-        return plugin.authenticate(auth_user=auth_user)
+        return plugin.authenticate(auth_user=auth_user, skip_active_check=skip_active_check)
 
     def authenticate(self, auth_header: str) -> AccountSession:
         _session = self._authenticate(auth_header=auth_header)
         return self.auth_utils.enrich_session(session=_session)
 
     def authenticate_and_save(self, auth_header: str) -> AccountSession:
-        _session = self._authenticate(auth_header=auth_header)
+        _session = self._authenticate(auth_header=auth_header, skip_active_check=True)
         session = self.repo.add_one(_session)
         return self.auth_utils.enrich_session(session=session)
 
-    def create_new(self, name: str, email: str, password: str) -> None:
+    def create_new(self, name: str, email: str, password: str) -> str:
         hashed_pass = self.auth_utils.hash_password(password)
 
         _account = AccountORM(
@@ -60,6 +60,15 @@ class AuthManager:
                 password_hash=hashed_pass,
             ),
         )
-
         self.repo.add_one(_account)
+
+        # create temporary session
+        temp_session = self.auth_utils.make_session(account=_account, ttl_days=0.1)
+        s = self.repo.add_one(temp_session)
+        return self.auth_utils.enrich_session(session=s).access_token
+
+    def activate_account(self, auth_header: str):
+        session = self._authenticate(auth_header=auth_header, skip_active_check=True)
+        session.account.is_active = True
+        self.repo.add_one(session.account)
         return

@@ -6,7 +6,7 @@ from flux_watch_api.schema import AccountSessionORM
 
 class Plugin(abc.ABC):
     @abc.abstractmethod
-    def authenticate(self, auth_user: AuthUser) -> AccountSessionORM:
+    def authenticate(self, auth_user: AuthUser, **kwargs) -> AccountSessionORM:
         raise NotImplementedError
 
     @abc.abstractmethod

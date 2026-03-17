@@ -1,40 +1,21 @@
-from starlette.middleware.base import BaseHTTPMiddleware
+from fastapi import Depends
 from starlette.requests import Request
-from starlette.responses import Response
 
 from flux_watch_api.core.config import AppConfig
-from flux_watch_api.database.session import get_session
+from flux_watch_api.errors.rest_errors import UnauthorizedError
+from flux_watch_api.managers.auth.auth_manager import AuthManager
 
 
-class AuthMiddleware(BaseHTTPMiddleware):
-    def __init__(self, app, app_config: AppConfig):
-        super().__init__(app)
-        self.app_config = app_config
+def auth_middleware(
+    request: Request, auth_manager: AuthManager = Depends(), app_config: AppConfig = Depends()
+):
+    for path_regex in app_config.skip_auth_routes:
+        if path_regex.match(request.url.path):
+            return
 
-    @staticmethod
-    def authenticate_user(token, db):
-        return {
-            "token": token,
-        }
+    session = auth_manager.authenticate(auth_header=request.headers.get("Authorization", None))
+    if session is None:
+        raise UnauthorizedError
 
-    async def dispatch(self, request: Request, call_next) -> Response:
-        session_gen = get_session()
-        db = next(session_gen)  # open session
-
-        try:
-            token = request.headers.get("Authorization")
-
-            user = None
-            if token:
-                user = self.authenticate_user(token, db)
-
-            request.state.user = user
-
-            response = await call_next(request)
-            return response
-
-        finally:
-            try:
-                next(session_gen)  # close session
-            except StopIteration:
-                pass
+    request.state.session = session.account
+    return

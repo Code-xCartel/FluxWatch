@@ -6,20 +6,18 @@ from starlette.requests import Request
 from flux_watch_api.core.config import AppConfig
 from flux_watch_api.core.registry import registry
 from flux_watch_api.database.client import SQLClient
-
-
-def get_user(request: Request) -> dict:
-    # return request.state.get("client")
-    return {
-        "request": request,
-    }
+from flux_watch_api.models.account import AccountSession
 
 
 class Repository:
-    def __init__(self, user: dict = Depends(get_user), client: SQLClient = Depends()):
+    def __init__(self, request: Request, client: SQLClient = Depends()):
         self._client = client
-        self.user = user
+        self._request = request
         self.app_config: AppConfig = registry.resolve(AppConfig)
+
+    @property
+    def session(self) -> AccountSession | None:
+        return getattr(self._request.state, "session", None)
 
     def add_one(self, obj: Any):
         return self._client.add_one(obj)

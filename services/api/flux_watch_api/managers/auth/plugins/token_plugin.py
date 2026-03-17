@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 
 from flux_watch_api.core.base_repository import Repository
 from flux_watch_api.errors.rest_errors import UnauthorizedError
@@ -17,17 +17,22 @@ class TokenPlugin(Plugin):
         self._handler = repo
         self._auth_utils = auth_utils
 
-    def authenticate(self, auth_user: AuthUser) -> AccountSessionORM:
+    def authenticate(self, auth_user: AuthUser, **kwargs) -> AccountSessionORM:
         account: AccountORM = self._handler.get_one(
             AccountSearch, {"principal": auth_user.principal}
         )
+
+        if not account.is_active and not kwargs.get("skip_active_check", False):
+            raise UnauthorizedError(detail="Account is not active")
 
         if len(account.sessions) < 1:
             raise UnauthorizedError("session not found")
 
         active_sessions = [s for s in account.sessions if not s.expired]
 
-        current_session = next((s for s in active_sessions if s.id == auth_user.credentials), None)
+        current_session = next(
+            (s for s in active_sessions if str(s.id) == auth_user.credentials), None
+        )
 
         if not current_session:
             raise UnauthorizedError("session not found")
@@ -36,7 +41,7 @@ class TokenPlugin(Plugin):
             self._handler.delete_one(current_session)
             raise UnauthorizedError("invalid session")
 
-        if current_session.ttl <= datetime.now():
+        if current_session.ttl <= datetime.now(timezone.utc):
             self._handler.delete_one(current_session)
             raise UnauthorizedError("session expired")
 

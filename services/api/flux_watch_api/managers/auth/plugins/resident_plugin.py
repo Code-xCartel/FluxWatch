@@ -15,12 +15,12 @@ class ResidentPlugin(Plugin):
         self._handler = repo
         self._auth_utils = auth_utils
 
-    def authenticate(self, auth_user: AuthUser) -> AccountSessionORM:
+    def authenticate(self, auth_user: AuthUser, **kwargs) -> AccountSessionORM:
         account: AccountORM = self._handler.get_one(
             AccountSearch, {"principal": auth_user.principal}
         )
 
-        if not account.is_active:
+        if not account.is_active and not kwargs.get("skip_active_check", False):
             raise UnauthorizedError(detail="Account is not active")
 
         if account.is_locked:

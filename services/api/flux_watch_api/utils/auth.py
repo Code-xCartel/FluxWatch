@@ -18,7 +18,7 @@ class AuthUtils:
         return bcrypt.checkpw(password.encode(), hashed.encode())
 
     @staticmethod
-    def make_ttl(ttl_days: int | None) -> datetime:
+    def make_ttl(ttl_days: float | None) -> datetime:
         return datetime.now() + timedelta(days=ttl_days or 1)
 
     @staticmethod
@@ -26,11 +26,8 @@ class AuthUtils:
         _token = f"{_id}:{account.principal}"
         return base64.b64encode(_token.encode()).decode()
 
-    def make_session(self, account: AccountORM, ttl_days: int | None = None) -> AccountSessionORM:
-        _id = uuid.uuid4()
-
+    def make_session(self, account: AccountORM, ttl_days: float | None = None) -> AccountSessionORM:
         return AccountSessionORM(
-            id=_id,
             account_id=account.id,
             ttl=self.make_ttl(ttl_days),
             account=account,
