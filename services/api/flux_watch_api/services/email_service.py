@@ -1,3 +1,4 @@
+import logging
 import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
@@ -6,6 +7,8 @@ from pathlib import Path
 from fastapi import Depends
 
 from flux_watch_api.core.config import AppConfig
+
+logger = logging.getLogger(__name__)
 
 
 class EmailService:
@@ -49,6 +52,6 @@ class EmailService:
             with smtplib.SMTP_SSL(self.smtp_server, self.smtp_port) as server:
                 server.login(self.sender_email, self.sender_password)
                 server.sendmail(self.sender_email, to_emails, message.as_string())
-            print(f"Email sent successfully to {to_emails}")
+            logger.info(f"Email sent successfully to {to_emails}")
         except Exception as e:
-            print(f"Failed to send email: {e}")
+            logger.error(f"Failed to send email: {e}")
