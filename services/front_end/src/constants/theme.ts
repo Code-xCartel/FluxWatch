@@ -1,7 +1,7 @@
 const THEME = {
-    LIGHT: 'light',
-    DARK: 'dark',
-    SYSTEM: 'system',
-}
+    LIGHT: "light",
+    DARK: "dark",
+    SYSTEM: "system",
+};
 
-export {THEME}
+export {THEME};

@@ -3,7 +3,7 @@ import {
     createApi,
     type FetchArgs,
     fetchBaseQuery,
-    type FetchBaseQueryError
+    type FetchBaseQueryError,
 } from "@reduxjs/toolkit/query/react";
 import {logout} from "@/store/slices/authSlice.ts";
 import {eraseCookie} from "@/utils/cookies";
@@ -24,7 +24,11 @@ const rawBaseQuery = fetchBaseQuery({
 });
 
 // Interceptor: Catches 401s globally
-const baseQueryWithReAuth: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQueryError> = async (args, api, extraOptions) => {
+const baseQueryWithReAuth: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQueryError> = async (
+    args,
+    api,
+    extraOptions,
+) => {
     let result = await rawBaseQuery(args, api, extraOptions);
 
     if (result.error && result.error.status === 401) {

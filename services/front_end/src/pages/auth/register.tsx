@@ -3,7 +3,14 @@ import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {Link, useNavigate} from "react-router";
 import {Mail} from "lucide-react";
-import {Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle} from "@/components/ui/card";
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardFooter,
+    CardHeader,
+    CardTitle,
+} from "@/components/ui/card";
 import {AppTextField} from "@/components/form-fields/app-text-field";
 import {AppPasswordField} from "@/components/form-fields/app-password-filed";
 import {AppFormWrapper} from "@/components/form-fields/app-form-wrapper";
@@ -40,17 +47,20 @@ export default function Register() {
     const onSubmit = form.handleSubmit(async (values) => {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const {confirmPassword, ...rest} = values;
-        await register(rest).unwrap().then(() => {
-            setRegisteredEmail(values.email);
-            setShowSuccess(true);
-        }).catch(err => {
-            console.error("Registration failed:", err);
-        })
+        await register(rest)
+            .unwrap()
+            .then(() => {
+                setRegisteredEmail(values.email);
+                setShowSuccess(true);
+            })
+            .catch((err) => {
+                console.error("Registration failed:", err);
+            });
     });
 
     return (
-        <div className="min-h-screen w-full flex items-center justify-center p-4 bg-muted/40">
-            <Card className="w-full max-w-md shadow-lg border-muted">
+        <div className="bg-muted/40 flex min-h-screen w-full items-center justify-center p-4">
+            <Card className="border-muted w-full max-w-md shadow-lg">
                 <CardHeader className="space-y-1 text-center">
                     <CardTitle className="text-2xl font-bold">Create an account</CardTitle>
                     <CardDescription>
@@ -95,7 +105,7 @@ export default function Register() {
                     </AppFormWrapper>
                 </CardContent>
 
-                <CardFooter className="flex flex-wrap items-center justify-center gap-1 text-sm text-muted-foreground">
+                <CardFooter className="text-muted-foreground flex flex-wrap items-center justify-center gap-1 text-sm">
                     <span>Already have an account?</span>
                     <Link to={APP_ROUTE.LOGIN} className="text-primary font-medium hover:underline">
                         Log In
@@ -107,13 +117,13 @@ export default function Register() {
                 <AlertDialogContent size="sm">
                     <AlertDialogHeader>
                         <AlertDialogMedia>
-                            <Mail/>
+                            <Mail />
                         </AlertDialogMedia>
                         <AlertDialogTitle>Check your email</AlertDialogTitle>
                         <AlertDialogDescription>
-                            A verification link has been sent to <span
-                            className="font-medium text-foreground">{registeredEmail}</span>. Please check your inbox
-                            and click the link to activate your account.
+                            A verification link has been sent to{" "}
+                            <span className="text-foreground font-medium">{registeredEmail}</span>.
+                            Please check your inbox and click the link to activate your account.
                         </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>

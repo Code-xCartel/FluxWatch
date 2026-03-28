@@ -42,10 +42,7 @@ export function LogoutDialog({open, onOpenChange}: LogoutDialogProps) {
                     <AlertDialogAction disabled={isLoading} onClick={() => handleLogout("current")}>
                         Current Session
                     </AlertDialogAction>
-                    <AlertDialogAction
-                        disabled={isLoading}
-                        onClick={() => handleLogout("all")}
-                    >
+                    <AlertDialogAction disabled={isLoading} onClick={() => handleLogout("all")}>
                         All Sessions
                     </AlertDialogAction>
                 </AlertDialogFooter>

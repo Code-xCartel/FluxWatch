@@ -19,8 +19,12 @@ interface AppRadioGroupProps<T extends FieldValues> {
 }
 
 export function AppRadioGroup<T extends FieldValues>({
-                                                         name, control, label, options, variant = "default"
-                                                     }: AppRadioGroupProps<T>) {
+    name,
+    control,
+    label,
+    options,
+    variant = "default",
+}: AppRadioGroupProps<T>) {
     return (
         <Controller
             name={name}
@@ -30,7 +34,11 @@ export function AppRadioGroup<T extends FieldValues>({
                     <RadioGroup
                         onValueChange={field.onChange}
                         value={field.value}
-                        className={variant === "card" ? "grid grid-cols-1 md:grid-cols-2 gap-4" : "flex flex-col space-y-3"}
+                        className={
+                            variant === "card"
+                                ? "grid grid-cols-1 gap-4 md:grid-cols-2"
+                                : "flex flex-col space-y-3"
+                        }
                     >
                         {options.map((option) => {
                             const id = `${name}-${option.value}`;
@@ -38,19 +46,25 @@ export function AppRadioGroup<T extends FieldValues>({
 
                             return (
                                 <div key={option.value}>
-                                    <RadioGroupItem value={option.value} id={id} className="sr-only"/>
+                                    <RadioGroupItem
+                                        value={option.value}
+                                        id={id}
+                                        className="sr-only"
+                                    />
                                     <Label
                                         htmlFor={id}
                                         className={cn(
-                                            "flex flex-col items-start justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground cursor-pointer",
-                                            isSelected ? "border-primary" : "opacity-80"
+                                            "border-muted bg-popover hover:bg-accent hover:text-accent-foreground flex cursor-pointer flex-col items-start justify-between rounded-md border-2 p-4",
+                                            isSelected ? "border-primary" : "opacity-80",
                                         )}
                                     >
-                                        <span className="font-bold tracking-tight">{option.label}</span>
+                                        <span className="font-bold tracking-tight">
+                                            {option.label}
+                                        </span>
                                         {option.description && (
-                                            <span className="text-xs text-muted-foreground mt-1">
-                        {option.description}
-                      </span>
+                                            <span className="text-muted-foreground mt-1 text-xs">
+                                                {option.description}
+                                            </span>
                                         )}
                                     </Label>
                                 </div>

@@ -15,9 +15,7 @@ import {
 import {LogoutDialog} from "@/components/logout-dialog";
 import {APP_ROUTE} from "@/constants/routes.ts";
 
-const navItems = [
-    {title: "Events", icon: Home, path: APP_ROUTE.HOMEPAGE},
-];
+const navItems = [{title: "Events", icon: Home, path: APP_ROUTE.HOMEPAGE}];
 
 export function AppSidebar() {
     const [logoutOpen, setLogoutOpen] = useState(false);
@@ -38,7 +36,7 @@ export function AppSidebar() {
                                             isActive={location.pathname === item.path}
                                             onClick={() => navigate(item.path)}
                                         >
-                                            <item.icon/>
+                                            <item.icon />
                                             <span>{item.title}</span>
                                         </SidebarMenuButton>
                                     </SidebarMenuItem>
@@ -52,7 +50,7 @@ export function AppSidebar() {
                     <SidebarMenu>
                         <SidebarMenuItem>
                             <SidebarMenuButton onClick={() => setLogoutOpen(true)}>
-                                <LogOut/>
+                                <LogOut />
                                 <span>Logout</span>
                             </SidebarMenuButton>
                         </SidebarMenuItem>
@@ -60,7 +58,7 @@ export function AppSidebar() {
                 </SidebarFooter>
             </Sidebar>
 
-            <LogoutDialog open={logoutOpen} onOpenChange={setLogoutOpen}/>
+            <LogoutDialog open={logoutOpen} onOpenChange={setLogoutOpen} />
         </>
     );
 }

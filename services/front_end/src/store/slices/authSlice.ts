@@ -20,10 +20,7 @@ const authSlice = createSlice({
     name: REDUX_IDENTIFIERS.AUTH_REDUCER,
     initialState,
     reducers: {
-        login: (
-            state,
-            {payload}: PayloadAction<AuthResponse>
-        ) => {
+        login: (state, {payload}: PayloadAction<AuthResponse>) => {
             state.user = payload.account;
             state.token = payload.accessToken;
             state.isAuthenticated = true;
@@ -39,4 +36,4 @@ const authSlice = createSlice({
 });
 
 export const {login, logout} = authSlice.actions;
-export default authSlice
+export default authSlice;

@@ -2,10 +2,14 @@ import {type Control, Controller, type FieldPath, type FieldValues} from "react-
 import {Checkbox} from "@/components/ui/checkbox";
 import {BaseField} from "./base-field";
 
-export function AppCheckbox<T extends FieldValues>({name, control, label}: {
-    name: FieldPath<T>,
-    control: Control<T>,
-    label: string
+export function AppCheckbox<T extends FieldValues>({
+    name,
+    control,
+    label,
+}: {
+    name: FieldPath<T>;
+    control: Control<T>;
+    label: string;
 }) {
     return (
         <Controller
@@ -13,7 +17,7 @@ export function AppCheckbox<T extends FieldValues>({name, control, label}: {
             control={control}
             render={({field, fieldState: {error}}) => (
                 <BaseField label={label} error={error?.message} isCheckbox>
-                    <Checkbox checked={field.value} onCheckedChange={field.onChange}/>
+                    <Checkbox checked={field.value} onCheckedChange={field.onChange} />
                 </BaseField>
             )}
         />

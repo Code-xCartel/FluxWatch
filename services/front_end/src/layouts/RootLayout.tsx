@@ -4,11 +4,11 @@ import {ModeToggle} from "@/components/mode-toggle.tsx";
 
 const RootLayout: FC = () => {
     return (
-        <div className="relative min-h-screen bg-background text-foreground">
-            <ModeToggle/>
-            <Outlet/>
+        <div className="bg-background text-foreground relative min-h-screen">
+            <ModeToggle />
+            <Outlet />
         </div>
     );
-}
+};
 
 export default RootLayout;

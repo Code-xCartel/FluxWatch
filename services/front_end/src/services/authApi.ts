@@ -32,10 +32,10 @@ export const authApi = baseApi.injectEndpoints({
                 url: API_ENDPOINTS.AUTH.SIGN_UP,
                 method: HTTP_METHODS.POST,
                 body: credentials,
-            })
+            }),
         }),
 
-        activate: builder.mutation<{ msg: string }, string>({
+        activate: builder.mutation<{msg: string}, string>({
             query: (token) => ({
                 url: API_ENDPOINTS.AUTH.ACTIVATE,
                 method: HTTP_METHODS.POST,
@@ -45,7 +45,7 @@ export const authApi = baseApi.injectEndpoints({
             }),
         }),
 
-        resendEmail: builder.mutation<{ msg: string }, string>({
+        resendEmail: builder.mutation<{msg: string}, string>({
             query: (token) => ({
                 url: API_ENDPOINTS.AUTH.RESEND_EMAIL,
                 method: HTTP_METHODS.POST,
@@ -74,5 +74,5 @@ export const {
     useRegisterMutation,
     useActivateMutation,
     useResendEmailMutation,
-    useLogoutMutation
+    useLogoutMutation,
 } = authApi;

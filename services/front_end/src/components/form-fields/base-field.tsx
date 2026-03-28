@@ -9,7 +9,7 @@ interface BaseFieldProps {
 }
 
 export const BaseField = ({label, error, children, isCheckbox}: BaseFieldProps) => (
-    <Field className={isCheckbox ? "flex flex-row items-start space-x-3 space-y-0" : ""}>
+    <Field className={isCheckbox ? "flex flex-row items-start space-y-0 space-x-3" : ""}>
         {!isCheckbox && label && <FieldLabel>{label}</FieldLabel>}
         {children}
         {isCheckbox && label && <FieldLabel className="text-sm font-medium">{label}</FieldLabel>}

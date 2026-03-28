@@ -19,17 +19,17 @@ const Routes = () => {
                     children: [
                         {
                             path: APP_ROUTE.LOGIN,
-                            Component: Login
+                            Component: Login,
                         },
                         {
                             path: APP_ROUTE.REGISTER,
-                            Component: Register
+                            Component: Register,
                         },
                         {
                             path: APP_ROUTE.ACTIVATE,
-                            Component: Activate
-                        }
-                    ]
+                            Component: Activate,
+                        },
+                    ],
                 },
 
                 // PROTECTED-ROUTES
@@ -41,18 +41,17 @@ const Routes = () => {
                             children: [
                                 {
                                     path: APP_ROUTE.HOMEPAGE,
-                                    Component: Events
-                                }
-                            ]
-                        }
-                    ]
-                }
-            ]
+                                    Component: Events,
+                                },
+                            ],
+                        },
+                    ],
+                },
+            ],
         },
+    ]);
 
-    ])
-
-    return <RouterProvider router={router}/>;
-}
+    return <RouterProvider router={router} />;
+};
 
 export default Routes;
