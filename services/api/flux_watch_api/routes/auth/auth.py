@@ -61,3 +61,29 @@ def sign_out(request: Request, scope: LogoutScope = Q(...), auth_manager: AuthMa
 def activate(request: Request, auth_manager: AuthManager = Depends()):
     auth_manager.activate_account(request.headers.get("Authorization", None))
     return MessageResponse(msg="Account activated successfully")
+
+
+@auth_router.post("/resend-email", tags=["resend"], status_code=status.HTTP_200_OK)
+def resend_email(
+    request: Request,
+    background_tasks: BackgroundTasks,
+    auth_manager: AuthManager = Depends(),
+    email_service: EmailService = Depends(),
+    config: AppConfig = Depends(),
+):
+    session: AccountSession = auth_manager.new_temp_session(
+        auth_header=request.headers.get("Authorization", None)
+    )
+
+    background_tasks.add_task(
+        lambda: email_service.send_email(
+            to_emails=session.account.principal,
+            subject="Activate Your Account",
+            template_path="templates/email_verification.html",
+            name=session.account.name,
+            platform_link=config.PLATFORM_LINK,
+            token=session.access_token,
+        )
+    )
+
+    return MessageResponse(msg="New email sent successfully")

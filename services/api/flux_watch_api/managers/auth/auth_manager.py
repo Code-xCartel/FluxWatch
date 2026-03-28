@@ -5,10 +5,12 @@ from flux_watch_api.errors.rest_errors import UnauthorizedError
 from flux_watch_api.managers.auth.plugins.abstract import Plugin
 from flux_watch_api.managers.auth.plugins.builder import build_plugins
 from flux_watch_api.models.account import AccountSession
-from flux_watch_api.models.auth import LogoutScope
+from flux_watch_api.models.auth import LogoutScope, Scheme
+from flux_watch_api.models.common import AccountSearch
 from flux_watch_api.models.user import AuthUser
 from flux_watch_api.schema import AccountCredsORM, AccountORM, AccountSessionORM
 from flux_watch_api.utils.auth import AuthUtils
+from flux_watch_api.utils.utilities import extract_auth_user
 
 
 class AuthManager:
@@ -84,3 +86,15 @@ class AuthManager:
             for session in all_session:
                 self.repo.delete_one(session)
             return None
+
+    def new_temp_session(self, auth_header: str) -> AccountSession:
+        auth_user: AuthUser = extract_auth_user(Scheme.TOKEN, auth_header)
+        account: AccountORM = self.repo.get_one(AccountSearch, {"principal": auth_user.principal})
+
+        if len(account.sessions) > 1:
+            raise UnauthorizedError(detail="Account already has more than one sessions")
+
+        self.repo.delete_one(account.sessions[0])
+        temp_session = self.auth_utils.make_session(account=account, ttl_days=0.1)
+        s = self.repo.add_one(temp_session)
+        return self.auth_utils.enrich_session(session=s)
