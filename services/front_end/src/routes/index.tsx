@@ -6,6 +6,7 @@ import Login from "@/pages/auth/login.tsx";
 import AuthLayout from "@/layouts/AuthLayout.tsx";
 import Events from "@/pages/events";
 import Register from "@/pages/auth/register.tsx";
+import Activate from "@/pages/auth/activate.tsx";
 
 const Routes = () => {
     const router = createBrowserRouter([
@@ -18,13 +19,17 @@ const Routes = () => {
                     children: [
                         {
                             path: APP_ROUTE.LOGIN,
-                            Component: Login
+                            Component: Login,
                         },
                         {
                             path: APP_ROUTE.REGISTER,
-                            Component: Register
-                        }
-                    ]
+                            Component: Register,
+                        },
+                        {
+                            path: APP_ROUTE.ACTIVATE,
+                            Component: Activate,
+                        },
+                    ],
                 },
 
                 // PROTECTED-ROUTES
@@ -36,18 +41,17 @@ const Routes = () => {
                             children: [
                                 {
                                     path: APP_ROUTE.HOMEPAGE,
-                                    Component: Events
-                                }
-                            ]
-                        }
-                    ]
-                }
-            ]
+                                    Component: Events,
+                                },
+                            ],
+                        },
+                    ],
+                },
+            ],
         },
+    ]);
 
-    ])
-
-    return <RouterProvider router={router}/>;
-}
+    return <RouterProvider router={router} />;
+};
 
 export default Routes;

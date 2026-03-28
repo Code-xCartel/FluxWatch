@@ -1,4 +1,11 @@
-import {Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle} from "@/components/ui/card";
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardFooter,
+    CardHeader,
+    CardTitle,
+} from "@/components/ui/card";
 import {AppTextField} from "@/components/form-fields/app-text-field";
 import {AppPasswordField} from "@/components/form-fields/app-password-filed";
 import {AppFormWrapper} from "@/components/form-fields/app-form-wrapper";
@@ -20,13 +27,13 @@ export default function Login() {
         try {
             await login(values).unwrap();
         } catch (err) {
-            console.log(err)
+            console.log(err);
         }
     });
 
     return (
-        <div className="min-h-screen w-full flex items-center justify-center p-4 bg-muted/40">
-            <Card className="w-full max-w-md shadow-lg border-muted">
+        <div className="bg-muted/40 flex min-h-screen w-full items-center justify-center p-4">
+            <Card className="border-muted w-full max-w-md shadow-lg">
                 <CardHeader className="space-y-1 text-center">
                     <CardTitle className="text-2xl font-bold">Welcome Back</CardTitle>
                     <CardDescription>
@@ -58,9 +65,12 @@ export default function Login() {
                     </AppFormWrapper>
                 </CardContent>
 
-                <CardFooter className="flex flex-wrap items-center justify-center gap-1 text-sm text-muted-foreground">
+                <CardFooter className="text-muted-foreground flex flex-wrap items-center justify-center gap-1 text-sm">
                     <span>Don't have an account?</span>
-                    <Link to={APP_ROUTE.REGISTER} className="text-primary font-medium hover:underline">
+                    <Link
+                        to={APP_ROUTE.REGISTER}
+                        className="text-primary font-medium hover:underline"
+                    >
                         Create an account
                     </Link>
                 </CardFooter>

@@ -1,18 +1,16 @@
-export interface User {
+export interface Account {
     id: string;
-    username: string;
-    email: string;
-    role?: "admin" | "user" | "manager";
-    avatar?: string;
-    createdAt: string;
-}
-
-export interface AuthRequest {
-    username: string;
-    password: string;
+    name: string;
+    principal: string;
+    isActive: boolean;
+    isLocked: boolean;
+    failedLoginAttempts: number;
 }
 
 export interface AuthResponse {
-    token: string;
-    user: User;
+    accessToken: string;
+    account: Account;
+    ttl: string;
 }
+
+export type LogoutScope = "current" | "all";

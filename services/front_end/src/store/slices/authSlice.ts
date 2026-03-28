@@ -2,11 +2,12 @@ import {createSlice, type PayloadAction} from "@reduxjs/toolkit";
 import {eraseCookie, getCookie, setCookie} from "@/utils/cookies";
 import {REDUX_IDENTIFIERS} from "@/constants/redux-identifiers.ts";
 import {HEADERS} from "@/constants/headers.ts";
+import type {Account, AuthResponse} from "@/models/auth.ts";
 
 interface AuthState {
     token: string | null;
     isAuthenticated: boolean;
-    user: any | null;
+    user: Account | null;
 }
 
 const initialState: AuthState = {
@@ -19,14 +20,11 @@ const authSlice = createSlice({
     name: REDUX_IDENTIFIERS.AUTH_REDUCER,
     initialState,
     reducers: {
-        login: (
-            state,
-            {payload}: PayloadAction<{ user: any; token: string }>
-        ) => {
-            state.user = payload.user;
-            state.token = payload.token;
+        login: (state, {payload}: PayloadAction<AuthResponse>) => {
+            state.user = payload.account;
+            state.token = payload.accessToken;
             state.isAuthenticated = true;
-            setCookie(HEADERS.AUTH_TOKEN, payload.token, 7);
+            setCookie(HEADERS.AUTH_TOKEN, payload.accessToken, payload.ttl);
         },
         logout: (state) => {
             state.user = null;
@@ -38,4 +36,4 @@ const authSlice = createSlice({
 });
 
 export const {login, logout} = authSlice.actions;
-export default authSlice
+export default authSlice;

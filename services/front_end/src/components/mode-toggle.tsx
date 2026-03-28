@@ -1,21 +1,22 @@
-import {Button} from "@/components/ui/button"
-import {useTheme} from "@/components/theme-provider"
+import {Button} from "@/components/ui/button";
+import {useTheme} from "@/components/theme-provider";
 
 import {THEME} from "@/constants/theme.ts";
 
-import {Moon, Sun} from "lucide-react"
+import {Moon, Sun} from "lucide-react";
 
 export function ModeToggle() {
-    const {theme, setTheme} = useTheme()
+    const {theme, setTheme} = useTheme();
 
     return (
-        <Button variant="outline" size="icon" className="absolute bottom-4 right-4 cursor-pointer rounded-full"
-                onClick={() => setTheme(theme === THEME.DARK ? THEME.LIGHT : THEME.DARK)}
+        <Button
+            variant="outline"
+            size="icon"
+            className="absolute right-4 bottom-4 cursor-pointer rounded-full"
+            onClick={() => setTheme(theme === THEME.DARK ? THEME.LIGHT : THEME.DARK)}
         >
-            <Sun
-                className="h-[1.2rem] w-[1.2rem] scale-100 rotate-0 transition-all dark:scale-0 dark:-rotate-90"/>
-            <Moon
-                className="absolute h-[1.2rem] w-[1.2rem] scale-0 rotate-90 transition-all dark:scale-100 dark:rotate-0"/>
+            <Sun className="h-[1.2rem] w-[1.2rem] scale-100 rotate-0 transition-all dark:scale-0 dark:-rotate-90" />
+            <Moon className="absolute h-[1.2rem] w-[1.2rem] scale-0 rotate-90 transition-all dark:scale-100 dark:rotate-0" />
         </Button>
-    )
+    );
 }

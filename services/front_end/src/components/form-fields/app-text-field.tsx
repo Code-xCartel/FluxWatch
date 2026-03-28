@@ -12,8 +12,12 @@ interface AppTextFieldProps<T extends FieldValues> {
 }
 
 export function AppTextField<T extends FieldValues>({
-                                                        name, control, label, type = "text", ...props
-                                                    }: AppTextFieldProps<T>) {
+    name,
+    control,
+    label,
+    type = "text",
+    ...props
+}: AppTextFieldProps<T>) {
     return (
         <Controller
             name={name}
@@ -25,7 +29,11 @@ export function AppTextField<T extends FieldValues>({
                         {...props}
                         type={type}
                         value={field.value ?? ""}
-                        onChange={(e) => field.onChange(type === "number" ? e.target.valueAsNumber : e.target.value)}
+                        onChange={(e) =>
+                            field.onChange(
+                                type === "number" ? e.target.valueAsNumber : e.target.value,
+                            )
+                        }
                     />
                 </BaseField>
             )}

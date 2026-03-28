@@ -1,11 +1,11 @@
 import {baseApi} from "./baseApi.ts";
 import {login, logout} from "@/store/slices/authSlice.ts";
-import {eraseCookie, setCookie} from "@/utils/cookies";
+import {eraseCookie} from "@/utils/cookies";
 import {toBase64} from "@/utils";
-import {type LoginFormValues, type RegisterFormValues} from "@/schemas/auth.ts";
+import {type LoginFormValues, type SignUpFormValues} from "@/schemas/auth.ts";
 import {API_ENDPOINTS, HTTP_METHODS} from "@/constants/api.ts";
 import {HEADERS} from "@/constants/headers.ts";
-import type {AuthResponse} from "@/models/auth.ts";
+import type {AuthResponse, LogoutScope} from "@/models/auth.ts";
 
 export const authApi = baseApi.injectEndpoints({
     endpoints: (builder) => ({
@@ -14,40 +14,52 @@ export const authApi = baseApi.injectEndpoints({
                 url: API_ENDPOINTS.AUTH.SIGN_IN,
                 method: HTTP_METHODS.POST,
                 headers: {
-                    [HEADERS.RESIDENT]: toBase64(`${credentials.email}:${credentials.password}`),
+                    [HEADERS.AUTHORIZATION]: `${HEADERS.RESIDENT} ${toBase64(`${credentials.password}:${credentials.email}`)}`,
                 },
             }),
             async onQueryStarted(_args, {dispatch, queryFulfilled}) {
                 try {
                     const {data} = await queryFulfilled;
-                    setCookie(HEADERS.AUTH_TOKEN, data.token);
-                    dispatch(login({user: data.user, token: data.token}));
+                    dispatch(login(data));
                 } catch (error) {
                     console.error("Login Side-effect failed:", error);
                 }
             },
         }),
 
-        register: builder.mutation<AuthResponse, RegisterFormValues>({
+        register: builder.mutation<AuthResponse, SignUpFormValues>({
             query: (credentials) => ({
                 url: API_ENDPOINTS.AUTH.SIGN_UP,
                 method: HTTP_METHODS.POST,
                 body: credentials,
             }),
-
-            async onQueryStarted(_args, {dispatch, queryFulfilled}) {
-                try {
-                    const {data} = await queryFulfilled;
-                    setCookie(HEADERS.AUTH_TOKEN, data.token);
-                    dispatch(login({user: data.user, token: data.token}));
-                } catch (error) {
-                    console.log(error)
-                }
-            },
         }),
 
-        logout: builder.mutation<void, void>({
-            query: () => ({url: API_ENDPOINTS.AUTH.SIGN_OUT, method: HTTP_METHODS.POST}),
+        activate: builder.mutation<{msg: string}, string>({
+            query: (token) => ({
+                url: API_ENDPOINTS.AUTH.ACTIVATE,
+                method: HTTP_METHODS.POST,
+                headers: {
+                    [HEADERS.AUTHORIZATION]: `${HEADERS.TOKEN} ${token}`,
+                },
+            }),
+        }),
+
+        resendEmail: builder.mutation<{msg: string}, string>({
+            query: (token) => ({
+                url: API_ENDPOINTS.AUTH.RESEND_EMAIL,
+                method: HTTP_METHODS.POST,
+                headers: {
+                    [HEADERS.AUTHORIZATION]: `${HEADERS.TOKEN} ${token}`,
+                },
+            }),
+        }),
+
+        logout: builder.mutation<void, LogoutScope>({
+            query: (scope) => ({
+                url: `${API_ENDPOINTS.AUTH.SIGN_OUT}?scope=${scope}`,
+                method: HTTP_METHODS.DELETE,
+            }),
             async onQueryStarted(_args, {dispatch, queryFulfilled}) {
                 await queryFulfilled;
                 eraseCookie(HEADERS.AUTH_TOKEN);
@@ -57,4 +69,10 @@ export const authApi = baseApi.injectEndpoints({
     }),
 });
 
-export const {useLoginMutation, useRegisterMutation, useLogoutMutation} = authApi;
+export const {
+    useLoginMutation,
+    useRegisterMutation,
+    useActivateMutation,
+    useResendEmailMutation,
+    useLogoutMutation,
+} = authApi;

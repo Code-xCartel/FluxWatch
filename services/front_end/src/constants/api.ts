@@ -10,6 +10,8 @@ export const API_ENDPOINTS = {
         SIGN_IN: "/auth/sign-in",
         SIGN_OUT: "/auth/sign-out",
         SIGN_UP: "/auth/sign-up",
+        ACTIVATE: "/auth/activate",
+        RESEND_EMAIL: "/auth/resend-email",
     },
     EVENTS: {
         LIST: "/events",

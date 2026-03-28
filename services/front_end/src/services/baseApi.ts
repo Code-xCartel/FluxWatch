@@ -3,7 +3,7 @@ import {
     createApi,
     type FetchArgs,
     fetchBaseQuery,
-    type FetchBaseQueryError
+    type FetchBaseQueryError,
 } from "@reduxjs/toolkit/query/react";
 import {logout} from "@/store/slices/authSlice.ts";
 import {eraseCookie} from "@/utils/cookies";
@@ -15,14 +15,20 @@ import {HEADERS} from "@/constants/headers.ts";
 const rawBaseQuery = fetchBaseQuery({
     baseUrl: API_URL,
     prepareHeaders: (headers, {getState}) => {
-        const token = (getState() as RootState).auth.token;
-        if (token) headers.set(HEADERS.AUTHORIZATION, `${HEADERS.BEARER} ${token}`);
+        if (!headers.has(HEADERS.AUTHORIZATION)) {
+            const token = (getState() as RootState).auth.token;
+            if (token) headers.set(HEADERS.AUTHORIZATION, `${HEADERS.TOKEN} ${token}`);
+        }
         return headers;
     },
 });
 
 // Interceptor: Catches 401s globally
-const baseQueryWithReAuth: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQueryError> = async (args, api, extraOptions) => {
+const baseQueryWithReAuth: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQueryError> = async (
+    args,
+    api,
+    extraOptions,
+) => {
     let result = await rawBaseQuery(args, api, extraOptions);
 
     if (result.error && result.error.status === 401) {

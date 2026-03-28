@@ -5,10 +5,9 @@ import {PUBLIC_ROUTES} from "@/constants/routes.ts";
 
 export const PrivateRoute = () => {
     const {isAuthenticated} = useSelector((state: RootState) => state.auth);
-    return isAuthenticated ? <Outlet/> : <Navigate to={PUBLIC_ROUTES.LOGIN} replace/>;
+    return isAuthenticated ? <Outlet /> : <Navigate to={PUBLIC_ROUTES.LOGIN} replace />;
 };
 
 export const PublicRoute = () => {
-    const {isAuthenticated} = useSelector((state: RootState) => state.auth);
-    return !isAuthenticated ? <Outlet/> : <Navigate to="/" replace/>;
+    return <Outlet />;
 };

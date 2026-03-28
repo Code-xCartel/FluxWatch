@@ -13,37 +13,35 @@ interface AppFormWrapperProps {
 }
 
 export function AppFormWrapper({
-                                   children,
-                                   onSubmit,
-                                   isLoading,
-                                   error,
-                                   buttonText,
-                                   className = "space-y-6 w-full"
-                               }: AppFormWrapperProps) {
-
+    children,
+    onSubmit,
+    isLoading,
+    error,
+    buttonText,
+    className = "space-y-6 w-full",
+}: AppFormWrapperProps) {
     // Extract error message from RTK Query or generic error
-    const errorMessage = error?.data?.message || error?.message || (error ? "An unexpected error occurred" : null);
+    const errorMessage =
+        error?.data?.message || error?.message || (error ? "An unexpected error occurred" : null);
 
     return (
         <form onSubmit={onSubmit} className={className}>
             {/* Global API Error Alert */}
             {errorMessage && (
                 <Alert variant="destructive">
-                    <AlertCircle className="h-4 w-4"/>
+                    <AlertCircle className="h-4 w-4" />
                     <AlertDescription>{errorMessage}</AlertDescription>
                 </Alert>
             )}
 
             {/* Form Fields (AppTextField, AppSelect, etc.) */}
-            <div className="space-y-4">
-                {children}
-            </div>
+            <div className="space-y-4">{children}</div>
 
             {/* Main Action Button */}
             <Button type="submit" className="w-full" disabled={isLoading}>
                 {isLoading ? (
                     <>
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin"/>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                         Processing...
                     </>
                 ) : (

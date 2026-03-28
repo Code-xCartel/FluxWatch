@@ -1,7 +1,7 @@
 type EventEntity = {
     type: "user" | "order" | "system" | "session" | string;
     id: string;
-}
+};
 
 type EventActor = {
     type: string;
@@ -12,7 +12,7 @@ type EventContext = {
     traceId?: string | null;
     sessionId?: string | null;
     source?: string | null;
-}
+};
 
 type Event = {
     eventId: string;
