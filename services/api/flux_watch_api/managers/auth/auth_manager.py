@@ -4,13 +4,12 @@ from flux_watch_api.core.base_repository import Repository
 from flux_watch_api.errors.rest_errors import UnauthorizedError
 from flux_watch_api.managers.auth.plugins.abstract import Plugin
 from flux_watch_api.managers.auth.plugins.builder import build_plugins
-from flux_watch_api.models.account import AccountSession
-from flux_watch_api.models.auth import LogoutScope, Scheme
+from flux_watch_api.models.account import AccountSession, Sessions
+from flux_watch_api.models.auth import LogoutScope
 from flux_watch_api.models.common import AccountSearch
 from flux_watch_api.models.user import AuthUser
 from flux_watch_api.schema import AccountCredsORM, AccountORM, AccountSessionORM
 from flux_watch_api.utils.auth import AuthUtils
-from flux_watch_api.utils.utilities import extract_auth_user
 
 
 class AuthManager:
@@ -88,7 +87,7 @@ class AuthManager:
             return None
 
     def new_temp_session(self, auth_header: str) -> AccountSession:
-        auth_user: AuthUser = extract_auth_user(Scheme.TOKEN, auth_header)
+        auth_user, _ = self._build_auth_user(auth_header=auth_header)
         account: AccountORM = self.repo.get_one(AccountSearch, {"principal": auth_user.principal})
 
         if len(account.sessions) > 1:
@@ -98,3 +97,15 @@ class AuthManager:
         temp_session = self.auth_utils.make_session(account=account, ttl_days=0.1)
         s = self.repo.add_one(temp_session)
         return self.auth_utils.enrich_session(session=s)
+
+    def get_sessions(self, auth_header: str):
+        auth_user, _ = self._build_auth_user(auth_header=auth_header)
+        account: AccountORM = self.repo.get_one(AccountSearch, {"principal": auth_user.principal})
+
+        active_sessions = [
+            Sessions.model_validate(s)
+            for s in account.sessions
+            if not s.expired and not str(s.id) == auth_user.credentials
+        ]
+
+        return active_sessions

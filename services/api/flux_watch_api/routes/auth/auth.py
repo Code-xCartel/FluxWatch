@@ -5,7 +5,7 @@ from starlette.requests import Request
 
 from flux_watch_api.core.config import AppConfig
 from flux_watch_api.managers.auth.auth_manager import AuthManager
-from flux_watch_api.models.account import AccountCreate, AccountSession
+from flux_watch_api.models.account import AccountCreate, AccountSession, SessionsResponse
 from flux_watch_api.models.auth import LogoutScope
 from flux_watch_api.models.response_schema import MessageResponse
 from flux_watch_api.services.email_service import EmailService
@@ -87,3 +87,14 @@ def resend_email(
     )
 
     return MessageResponse(msg="New email sent successfully")
+
+
+@auth_router.get(
+    "/sessions", tags=["sessions"], status_code=status.HTTP_200_OK, response_model=SessionsResponse
+)
+def get_sessions(
+    request: Request,
+    auth_manager: AuthManager = Depends(),
+):
+    sessions = auth_manager.get_sessions(auth_header=request.headers.get("Authorization", None))
+    return SessionsResponse(sessions=sessions)

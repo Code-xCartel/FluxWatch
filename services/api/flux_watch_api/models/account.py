@@ -44,3 +44,14 @@ class ApiKey(APIModel):
     created_at: datetime.datetime
     last_used_at: datetime.datetime | None
     is_active: bool
+
+
+class Sessions(APIModel):
+    id: UUID
+    created_at: datetime.datetime
+    updated_at: datetime.datetime | None
+    ttl: datetime.datetime | None
+
+
+class SessionsResponse(APIModel):
+    sessions: list[Sessions]

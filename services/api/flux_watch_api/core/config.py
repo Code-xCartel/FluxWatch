@@ -40,6 +40,7 @@ class AppConfig:
             re.compile(rf"^{self.API_PREFIX}/auth/sign-up$"),
             re.compile(rf"^{self.API_PREFIX}/auth/sign-in$"),
             re.compile(rf"^{self.API_PREFIX}/auth/activate$"),
+            re.compile(rf"^{self.API_PREFIX}/auth/resend-email$"),
         )
 
     LOGGING_CONFIG = {
