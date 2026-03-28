@@ -5,7 +5,12 @@ from starlette.requests import Request
 
 from flux_watch_api.core.config import AppConfig
 from flux_watch_api.managers.auth.auth_manager import AuthManager
-from flux_watch_api.models.account import AccountCreate, AccountSession, SessionsResponse
+from flux_watch_api.models.account import (
+    AccountCreate,
+    AccountSession,
+    AccountSessionMinimal,
+    SessionsResponse,
+)
 from flux_watch_api.models.auth import LogoutScope
 from flux_watch_api.models.response_schema import MessageResponse
 from flux_watch_api.services.email_service import EmailService
@@ -42,7 +47,10 @@ def sign_up(
 
 
 @auth_router.post(
-    "/sign-in", tags=["sign-in"], status_code=status.HTTP_200_OK, response_model=AccountSession
+    "/sign-in",
+    tags=["sign-in"],
+    status_code=status.HTTP_200_OK,
+    response_model=AccountSessionMinimal,
 )
 def sign_in(request: Request, auth_manager: AuthManager = Depends()):
     return auth_manager.authenticate_and_save(

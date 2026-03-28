@@ -34,9 +34,12 @@ class Account(APIModel):
     failed_login_attempts: int
 
 
-class AccountSession(APIModel):
+class AccountSessionMinimal(APIModel):
     access_token: str
     ttl: datetime.datetime
+
+
+class AccountSession(AccountSessionMinimal):
     account: Account
 
 
