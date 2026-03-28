@@ -1,0 +1,13 @@
+[package]
+name = "analytics_engine"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+time = { version = "0.3.47", features = ["formatting", "parsing"] }
+uuid = { version = "1.22.0", features = ["v4", "serde"] }
+redis = "1.0.5"
+dotenvy = "0.15"
+native-tls = "0.2"
+postgres = "0.19"
+postgres-native-tls = "0.5"
