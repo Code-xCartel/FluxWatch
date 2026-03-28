@@ -7,9 +7,9 @@ export const HTTP_METHODS = {
 
 export const API_ENDPOINTS = {
     AUTH: {
-        LOGIN: "/auth/login",
-        LOGOUT: "/auth/logout",
-        REGISTER: "/auth/register",
+        SIGN_IN: "/auth/sign-in",
+        SIGN_OUT: "/auth/sign-out",
+        SIGN_UP: "/auth/sign-up",
     },
     EVENTS: {
         LIST: "/events",

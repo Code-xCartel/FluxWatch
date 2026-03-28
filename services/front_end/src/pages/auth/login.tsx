@@ -13,13 +13,14 @@ export default function Login() {
     const [login, {isLoading, error}] = useLoginMutation();
     const form = useForm<LoginFormValues>({
         resolver: zodResolver(loginSchema),
-        defaultValues: {username: "", password: ""},
+        defaultValues: {email: "", password: ""},
     });
 
     const onSubmit = form.handleSubmit(async (values) => {
         try {
             await login(values).unwrap();
         } catch (err) {
+            console.log(err)
         }
     });
 
@@ -41,9 +42,10 @@ export default function Login() {
                         buttonText="Sign In"
                     >
                         <AppTextField
-                            name="username"
-                            label="Username"
-                            placeholder="johndoe"
+                            name="email"
+                            label="Email"
+                            type="email"
+                            placeholder="john@example.com"
                             control={form.control}
                             disabled={isLoading}
                         />
