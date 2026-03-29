@@ -118,11 +118,13 @@ class AuthManager:
 
     def update_password(self, new_password: str) -> bool:
         hashed_pass = self.auth_utils.hash_password(new_password)
-        _account = self.repo.session_account
 
-        if self.auth_utils.validate_password(new_password, _account.credentials.password_hash):
+        _account = self.repo.session_account
+        account = self.repo.get_one(AccountSearch, {"principal": _account.principal})
+
+        if self.auth_utils.validate_password(new_password, account.credentials.password_hash):
             raise AlreadyExistsError(detail="New password cannot be same as old password")
 
-        _account.credentials.password_hash = hashed_pass
-        self.repo.add_one(_account)
+        account.credentials.password_hash = hashed_pass
+        self.repo.add_one(account)
         return True
