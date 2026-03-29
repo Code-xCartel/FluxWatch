@@ -1,7 +1,7 @@
 from fastapi.params import Depends
 
 from flux_watch_api.core.base_repository import Repository
-from flux_watch_api.errors.rest_errors import UnauthorizedError
+from flux_watch_api.errors.rest_errors import AlreadyExistsError, UnauthorizedError
 from flux_watch_api.managers.auth.plugins.abstract import Plugin
 from flux_watch_api.managers.auth.plugins.builder import build_plugins
 from flux_watch_api.models.account import AccountSession, Sessions
@@ -46,7 +46,7 @@ class AuthManager:
         return self.auth_utils.enrich_session(session=_session)
 
     def authenticate_and_save(self, auth_header: str) -> AccountSession:
-        _session = self._authenticate(auth_header=auth_header, skip_active_check=True)
+        _session = self._authenticate(auth_header=auth_header)
         session = self.repo.add_one(_session)
         return self.auth_utils.enrich_session(session=session)
 
@@ -86,14 +86,20 @@ class AuthManager:
                 self.repo.delete_one(session)
             return None
 
-    def new_temp_session(self, auth_header: str) -> AccountSession:
-        auth_user, _ = self._build_auth_user(auth_header=auth_header)
-        account: AccountORM = self.repo.get_one(AccountSearch, {"principal": auth_user.principal})
+    def new_temp_session(
+        self, auth_header: str | None, email: str | None, delete_previous: bool = True
+    ) -> AccountSession:
+        auth_user = None
+        if not email:
+            auth_user, _ = self._build_auth_user(auth_header=auth_header)
 
-        if len(account.sessions) > 1:
-            raise UnauthorizedError(detail="Account already has more than one sessions")
+        email = email if email else auth_user.principal
+        account: AccountORM = self.repo.get_one(AccountSearch, {"principal": email})
 
-        self.repo.delete_one(account.sessions[0])
+        if delete_previous:
+            for session in account.sessions:
+                self.repo.delete_one(session)
+
         temp_session = self.auth_utils.make_session(account=account, ttl_days=0.1)
         s = self.repo.add_one(temp_session)
         return self.auth_utils.enrich_session(session=s)
@@ -109,3 +115,16 @@ class AuthManager:
         ]
 
         return active_sessions
+
+    def update_password(self, new_password: str) -> bool:
+        hashed_pass = self.auth_utils.hash_password(new_password)
+
+        _account = self.repo.session_account
+        account = self.repo.get_one(AccountSearch, {"principal": _account.principal})
+
+        if self.auth_utils.validate_password(new_password, account.credentials.password_hash):
+            raise AlreadyExistsError(detail="New password cannot be same as old password")
+
+        account.credentials.password_hash = hashed_pass
+        self.repo.add_one(account)
+        return True

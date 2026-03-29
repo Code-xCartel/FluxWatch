@@ -9,10 +9,8 @@ from flux_watch_api.models.base import APIModel
 EMAIL_REGEX = re.compile(r"^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$")
 
 
-class AccountCreate(APIModel):
-    name: str
+class Email(APIModel):
     email: str
-    password: str = Field(..., min_length=8, max_length=64)
 
     @field_validator("email")
     @classmethod
@@ -23,6 +21,14 @@ class AccountCreate(APIModel):
             raise ValueError("Invalid email address")
 
         return v
+
+
+class Password(APIModel):
+    password: str = Field(..., min_length=8, max_length=64)
+
+
+class AccountCreate(Email, Password):
+    name: str
 
 
 class Account(APIModel):
