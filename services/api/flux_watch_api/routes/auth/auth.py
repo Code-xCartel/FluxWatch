@@ -9,6 +9,8 @@ from flux_watch_api.models.account import (
     AccountCreate,
     AccountSession,
     AccountSessionMinimal,
+    Email,
+    Password,
     SessionsResponse,
 )
 from flux_watch_api.models.auth import LogoutScope
@@ -80,7 +82,8 @@ def resend_email(
     config: AppConfig = Depends(),
 ):
     session: AccountSession = auth_manager.new_temp_session(
-        auth_header=request.headers.get("Authorization", None)
+        auth_header=request.headers.get("Authorization", None),
+        email=None,
     )
 
     background_tasks.add_task(
@@ -106,3 +109,39 @@ def get_sessions(
 ):
     sessions = auth_manager.get_sessions(auth_header=request.headers.get("Authorization", None))
     return SessionsResponse(sessions=sessions)
+
+
+@auth_router.post("/forgot-password", tags=["forgot-password"], status_code=status.HTTP_200_OK)
+def forgot_password(
+    body: Email,
+    background_tasks: BackgroundTasks,
+    auth_manager: AuthManager = Depends(),
+    email_service: EmailService = Depends(),
+    config: AppConfig = Depends(),
+):
+    session: AccountSession = auth_manager.new_temp_session(
+        auth_header=None,
+        email=body.email,
+        delete_previous=False,
+    )
+
+    background_tasks.add_task(
+        lambda: email_service.send_email(
+            to_emails=session.account.principal,
+            subject="Reset Your Password",
+            template_path="templates/reset_password.html",
+            name=session.account.name,
+            platform_link=config.PLATFORM_LINK,
+            token=session.access_token,
+        )
+    )
+
+    return MessageResponse(msg="Password reset email sent successfully")
+
+
+@auth_router.post("/reset-password", tags=["reset-password"], status_code=status.HTTP_200_OK)
+def reset_password(
+    body: Password,
+    auth_manager: AuthManager = Depends(),
+):
+    return auth_manager.update_password(new_password=body.password)
