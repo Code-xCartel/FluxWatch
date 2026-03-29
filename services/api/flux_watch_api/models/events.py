@@ -57,9 +57,9 @@ class Event(EventCreate):
     event_id: UUID
     occurred_at: datetime
     event_version: int = 1
-    parent: str
+    parent: str | None
 
-    def serealize(self, parent: str) -> EventORM:
+    def serialize(self, parent: str) -> EventORM:
         return EventORM(
             entity_type=self.entity.type,
             entity_id=self.entity.id,

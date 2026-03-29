@@ -37,7 +37,7 @@ class EventsRepository:
         if len(CACHE_BUFFER) >= BUFFER_SIZE:
             redis: Redis = registry.resolve(Redis)
             redis.client.rpush(REDIS_EVENT_PROCESSOR_KEY, *CACHE_BUFFER)
-        return self.repo.add_one(event.serealize(parent=self.repo.session_account.principal))
+        return self.repo.add_one(event.serialize(parent=self.repo.session_account.principal))
 
     def get_event_by_id(self, event_id: str) -> Event:
         raw_event = self.repo.get_one(EventsSearch, {"event_id": event_id})
