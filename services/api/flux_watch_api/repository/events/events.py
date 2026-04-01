@@ -1,19 +1,15 @@
+from typing import cast
+
 from fastapi import Depends
 
 from flux_watch_api.core.base_repository import Repository
-from flux_watch_api.core.registry import registry
 from flux_watch_api.database.query_builder.base import QueryModel
 from flux_watch_api.database.query_builder.features import FilterFeature, ModelFeature
-from flux_watch_api.database.redis import Redis
-from flux_watch_api.models.events import Event
+from flux_watch_api.models.events import Event, EventCreate
 from flux_watch_api.models.response_schema import ListResponse, Meta
 from flux_watch_api.schema.events import EventORM
 from flux_watch_api.schema.utils.meta import MetaFields
 from flux_watch_api.utils.constants import REDIS_EVENT_PROCESSOR_KEY
-from flux_watch_api.utils.orm_mapper import deserialize_events
-
-BUFFER_SIZE = 10
-CACHE_BUFFER = []
 
 
 class EventsSearch(QueryModel):
@@ -31,22 +27,23 @@ class EventsRepository:
     def __init__(self, repo: Repository = Depends()):
         self.repo = repo
 
-    def ingest_event(self, event: Event):
-        # use redis, but only push in bulk since there are only 100ops/sec on free tier
-        CACHE_BUFFER.append(str(event.event_id))
-        if len(CACHE_BUFFER) >= BUFFER_SIZE:
-            redis: Redis = registry.resolve(Redis)
-            redis.client.rpush(REDIS_EVENT_PROCESSOR_KEY, *CACHE_BUFFER)
-        return self.repo.add_one(event.serialize(parent=self.repo.session_account.principal))
+    def ingest_event(self, event: EventCreate) -> Event:
+        serialized_event = EventORM.from_model(event, parent=self.repo.session_account.principal)
+        result: EventORM = self.repo.add_one(serialized_event)
+
+        self.repo.publish(REDIS_EVENT_PROCESSOR_KEY, result.to_stream_message())
+
+        return result.to_model()
 
     def get_event_by_id(self, event_id: str) -> Event:
-        raw_event = self.repo.get_one(EventsSearch, {"event_id": event_id})
-        return deserialize_events(raw_event)
+        raw_event: EventORM = self.repo.get_one(EventsSearch, {"id": event_id})
+        return raw_event.to_model()
 
     def get_all_events(self, params) -> ListResponse[Event]:
-        raw_events, total_count = self.repo.get_many(EventsSearch, params)
-        events = [deserialize_events(event) for event in raw_events]
+        raw_events, total_count = cast(
+            tuple[list[EventORM], int], self.repo.get_many(EventsSearch, params)
+        )
         return ListResponse(
             meta=Meta(total_count=total_count, returned_count=len(raw_events)),
-            results=events,
+            results=[event.to_model() for event in raw_events],
         )

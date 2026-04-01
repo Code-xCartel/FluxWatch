@@ -1,10 +1,9 @@
 import datetime
 import re
-from uuid import UUID
 
 from pydantic import Field, field_validator
 
-from flux_watch_api.models.base import APIModel
+from flux_watch_api.models.base import APIModel, ResourceModel
 
 EMAIL_REGEX = re.compile(r"^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$")
 
@@ -31,8 +30,7 @@ class AccountCreate(Email, Password):
     name: str
 
 
-class Account(APIModel):
-    id: UUID
+class Account(APIModel, ResourceModel):
     name: str
     principal: str
     is_active: bool
@@ -49,16 +47,12 @@ class AccountSession(AccountSessionMinimal):
     account: Account
 
 
-class ApiKey(APIModel):
-    created_at: datetime.datetime
+class ApiKey(APIModel, ResourceModel):
     last_used_at: datetime.datetime | None
     is_active: bool
 
 
-class Sessions(APIModel):
-    id: UUID
-    created_at: datetime.datetime
-    updated_at: datetime.datetime | None
+class Sessions(APIModel, ResourceModel):
     ttl: datetime.datetime | None
 
 

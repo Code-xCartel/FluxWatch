@@ -82,36 +82,88 @@ impl RedisClient {
 
     fn parse_redis_event(&self, event_data: HashMap<String, Value>) -> Option<Event> {
         // Extract and convert each field from Redis values using FromRedisValue trait
-        let event_id_str: String =
-            FromRedisValue::from_redis_value(event_data.get("event_id")?.clone()).ok()?;
+        let id_str: String =
+            FromRedisValue::from_redis_value(event_data.get("id")?.clone()).ok()?;
+        let entity_type: String =
+            FromRedisValue::from_redis_value(event_data.get("entity_type")?.clone()).ok()?;
+        let entity_id: String =
+            FromRedisValue::from_redis_value(event_data.get("entity_id")?.clone()).ok()?;
         let event_type_str: String =
             FromRedisValue::from_redis_value(event_data.get("event_type")?.clone()).ok()?;
-        let parent_str: String =
-            FromRedisValue::from_redis_value(event_data.get("parent")?.clone()).ok()?;
+        let event_version_str: String =
+            FromRedisValue::from_redis_value(event_data.get("event_version")?.clone()).ok()?;
         let occurred_at_str: String =
             FromRedisValue::from_redis_value(event_data.get("occurred_at")?.clone()).ok()?;
+        let created_at_str: String =
+            FromRedisValue::from_redis_value(event_data.get("created_at")?.clone()).ok()?;
+        let updated_at_str: String =
+            FromRedisValue::from_redis_value(event_data.get("updated_at")?.clone()).ok()?;
+        let producer: String =
+            FromRedisValue::from_redis_value(event_data.get("producer")?.clone()).ok()?;
+        let actor_type_str: String =
+            FromRedisValue::from_redis_value(event_data.get("actor_type")?.clone()).ok()?;
+        let actor_id_str: String =
+            FromRedisValue::from_redis_value(event_data.get("actor_id")?.clone()).ok()?;
+        let context_str: String =
+            FromRedisValue::from_redis_value(event_data.get("context")?.clone()).ok()?;
+        let payload: String =
+            FromRedisValue::from_redis_value(event_data.get("payload")?.clone()).ok()?;
+        let parent_str: String =
+            FromRedisValue::from_redis_value(event_data.get("parent")?.clone()).ok()?;
 
-        // Parse event_id as UUID
-        let event_id = Uuid::parse_str(&event_id_str).ok()?;
+        let id = Uuid::parse_str(&id_str).ok()?;
 
-        // Parse event_type
         let event_type = match event_type_str.as_str() {
-            "SystemMetrics" => EventType::SystemMetrics,
+            "system.metric" => EventType::SystemMetric,
+            "user.login" => EventType::UserLogin,
+            "user.logout" => EventType::UserLogout,
+            "order.created" => EventType::OrderCreated,
+            "order.completed" => EventType::OrderCompleted,
+            "order.cancelled" => EventType::OrderCancelled,
+            "session.started" => EventType::SessionStarted,
+            "session.ended" => EventType::SessionEnded,
             _ => {
                 eprintln!("Unknown event type: {}", event_type_str);
                 return None;
             }
         };
 
-        // Parse occurred_at as UtcDateTime
+        let event_version: u32 = event_version_str.parse().ok()?;
         let occurred_at = UtcDateTime::parse(&occurred_at_str, &Iso8601::DEFAULT).ok()?;
-        let parent = Parent(parent_str);
+        let created_at = UtcDateTime::parse(&created_at_str, &Iso8601::DEFAULT).ok()?;
+        let updated_at = UtcDateTime::parse(&updated_at_str, &Iso8601::DEFAULT).ok()?;
+
+        let actor_type = if actor_type_str.is_empty() {
+            None
+        } else {
+            Some(actor_type_str)
+        };
+        let actor_id = if actor_id_str.is_empty() {
+            None
+        } else {
+            Some(actor_id_str)
+        };
+        let context = if context_str.is_empty() {
+            None
+        } else {
+            Some(context_str)
+        };
 
         Some(Event {
-            event_id,
+            id,
+            entity_type,
+            entity_id,
             event_type,
-            parent,
+            event_version,
             occurred_at,
+            created_at,
+            updated_at,
+            producer,
+            actor_type,
+            actor_id,
+            context,
+            payload,
+            parent: Parent(parent_str),
         })
     }
 }

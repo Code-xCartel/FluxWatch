@@ -17,8 +17,9 @@ impl RuleEngine {
 
     fn _get_rule_from_type(event_type: &EventType, parent: Parent) -> Box<dyn EventRule> {
         match event_type {
-            EventType::SystemMetrics => Box::new(ErrorSpikeRule::new(parent)),
+            EventType::SystemMetric => Box::new(ErrorSpikeRule::new(parent)),
             // Add more event types and their corresponding rules here
+            _ => panic!("No rule defined for event type: {:?}", event_type),
         }
     }
 

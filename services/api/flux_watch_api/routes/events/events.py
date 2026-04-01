@@ -11,7 +11,7 @@ events_router = APIRouter()
 
 @events_router.post("/ingest", tags=["ingest"], status_code=status.HTTP_201_CREATED)
 def ingest(event: EventCreate, repo: EventsRepository = Depends()):
-    return repo.ingest_event(Event(**event.model_dump()))
+    return repo.ingest_event(event)
 
 
 @events_router.get(

@@ -45,7 +45,7 @@ fn main() {
                 for event in events {
                     println!(
                         "Processing event: {} for user: {:?}",
-                        event.event_id, event.parent
+                        event.id, event.parent
                     );
 
                     let rule = rule_engine.rule_for(&event.event_type, &event.parent);

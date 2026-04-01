@@ -73,7 +73,7 @@ impl ErrorSpikeRule {
     }
 
     fn get_event_ids(&self) -> Vec<Uuid> {
-        self.events.iter().map(|e| e.event_id).collect()
+        self.events.iter().map(|e| e.id).collect()
     }
 }
 

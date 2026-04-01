@@ -22,6 +22,7 @@ class DatabaseConnectionConfig(Enum):
 
 class Database:
     def __init__(self, url: str, config: DatabaseConnectionConfig):
+        logger.info("Initializing Postgres Engine.")
         try:
             self.engine = create_engine(url, **config.value)
             logger.info("Initialized Postgres Engine.")

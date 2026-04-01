@@ -1,11 +1,9 @@
 from datetime import datetime
 from typing import Any, Literal
-from uuid import UUID
 
 from pydantic import Field, model_validator
 
-from flux_watch_api.models.base import APIModel
-from flux_watch_api.schema.events import EventORM
+from flux_watch_api.models.base import APIModel, ResourceModel
 
 # Predetermined entity types for mvp
 EntityType = Literal["user", "order", "system", "session"]
@@ -39,6 +37,7 @@ class EventCreate(APIModel):
     entity: EventEntity
     event_type: str
     producer: str
+    occurred_at: datetime
     actor: EventActor | None = None
     context: EventContext | None = None
     payload: dict[str, Any] = Field(default_factory=dict)
@@ -53,41 +52,6 @@ class EventCreate(APIModel):
         return self
 
 
-class Event(EventCreate):
-    event_id: UUID | None
-    occurred_at: datetime
-    event_version: int = 1
-    parent: str | None
-
-    def serialize(self, parent: str) -> EventORM:
-        return EventORM(
-            entity_type=self.entity.type,
-            entity_id=self.entity.id,
-            event_type=self.event_type,
-            event_version=self.event_version,
-            producer=self.producer,
-            actor_type=self.actor.type if self.actor else None,
-            actor_id=self.actor.id if self.actor else None,
-            context=self.context.model_dump() if self.context else None,
-            payload=self.payload,
-            parent=parent,
-        )
-
-    class Config:
-        json_schema_extra = {
-            "example": {
-                "event_id": "uuid",
-                "entity": {"type": "user", "id": "USR_1"},
-                "event_type": "user.login",
-                "event_version": 1,
-                "occurred_at": "2026-02-07T12:00:00Z",
-                "producer": "frontend-app",
-                "actor": {"type": "user", "id": "USR_1"},
-                "context": {
-                    "trace_id": "req-123",
-                    "session_id": "sess-456",
-                    "source": "web",
-                },
-                "payload": {"ip": "1.2.3.4", "device": "web"},
-            }
-        }
+class Event(EventCreate, ResourceModel):
+    event_version: int
+    parent: str

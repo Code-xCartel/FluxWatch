@@ -1,3 +1,6 @@
+from datetime import datetime
+from uuid import UUID
+
 from pydantic import BaseModel, ConfigDict
 
 
@@ -14,11 +17,23 @@ class APIModel(BaseModel):
         from_attributes=True,
     )
 
-    def get_orm(self):
-        return f"{self.__name__}ORM"
+    __model__ = None
+
+    def get_orm(self) -> type:
+        if not self.__model__:
+            raise AttributeError("API model has not been initialized with an orm config")
+        return self.__model__
 
     def to_dict(self):
         d = {}
         for k, v in self.__dict__.items():
             d[k] = v
         return d
+
+
+class ResourceModel(APIModel):
+    """Mixin that adds standard resource fields (id, created_at, updated_at) to response models."""
+
+    id: UUID
+    created_at: datetime
+    updated_at: datetime
