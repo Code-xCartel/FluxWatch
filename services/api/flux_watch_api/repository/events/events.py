@@ -36,7 +36,7 @@ class EventsRepository:
         return result.to_model()
 
     def get_event_by_id(self, event_id: str) -> Event:
-        raw_event = self.repo.get_one(EventsSearch, {"id": event_id})
+        raw_event: EventORM = self.repo.get_one(EventsSearch, {"id": event_id})
         return raw_event.to_model()
 
     def get_all_events(self, params) -> ListResponse[Event]:
