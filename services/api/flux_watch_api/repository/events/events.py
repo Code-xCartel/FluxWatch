@@ -47,10 +47,10 @@ class EventsRepository:
         )
         return raw_event.to_model()
 
-    def get_all_events(self, params) -> ListResponse[Event]:
+    def get_all_events(self, **kwargs) -> ListResponse[Event]:
         raw_events, total_count = cast(
             tuple[list[EventORM], int],
-            self.repo.get_many(EventsSearch, parent=self.repo.principal, **params),
+            self.repo.get_many(EventsSearch, parent=self.repo.principal, **kwargs),
         )
         return ListResponse(
             meta=Meta(total_count=total_count, returned_count=len(raw_events)),

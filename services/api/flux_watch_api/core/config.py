@@ -26,6 +26,11 @@ class AppConfig:
     API_KEY_TTL_DAYS = get_env("API_KEY_TTL_DAYS", 30)
     API_KEY_DAILY_LIMIT = get_env("API_KEY_DAILY_LIMIT", 86400)
 
+    _allowed_origins_raw = get_env("ALLOWED_ORIGINS", "*")
+    ALLOWED_ORIGINS: list[str] = (
+        ["*"] if _allowed_origins_raw == "*" else _allowed_origins_raw.split(",")
+    )
+
     @cached_property
     def skip_auth_routes(self):
         return (
@@ -33,6 +38,7 @@ class AppConfig:
             re.compile(rf"^{self.API_PREFIX}/$"),
             re.compile(rf"^{self.API_PREFIX}/version$"),
             re.compile(rf"^{self.API_PREFIX}/info$"),
+            re.compile(rf"^{self.API_PREFIX}/health$"),
             re.compile(rf"^{self.API_PREFIX}/docs$"),
             re.compile(rf"^{self.API_PREFIX}/redoc$"),
             re.compile(rf"^{self.API_PREFIX}/openapi.json$"),

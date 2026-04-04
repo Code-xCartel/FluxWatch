@@ -20,3 +20,8 @@ class UnauthorizedError(HTTPException):
 class TooManyRequestsError(HTTPException):
     def __init__(self, detail: str = "Too many requests made"):
         super().__init__(status_code=status.HTTP_429_TOO_MANY_REQUESTS, detail=detail)
+
+
+class ServerError(HTTPException):
+    def __init__(self, detail: str = "An internal server error occurred"):
+        super().__init__(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=detail)

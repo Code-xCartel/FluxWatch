@@ -1,6 +1,6 @@
 import base64
 import uuid
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 import bcrypt
 
@@ -19,7 +19,7 @@ class AuthUtils:
 
     @staticmethod
     def make_ttl(ttl_days: float | None) -> datetime:
-        return datetime.now() + timedelta(days=ttl_days or 1)
+        return datetime.now(timezone.utc) + timedelta(days=ttl_days or 1)
 
     @staticmethod
     def make_token(_id: uuid.UUID, account: AccountORM) -> str:

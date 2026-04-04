@@ -9,6 +9,8 @@ class AppRegistry(metaclass=Singleton):
         self._dependencies: dict[Callable, Any] = {}
 
     def register(self, dependency: Callable, **kwargs):
+        if self._dependencies.get(dependency, None) is not None:
+            raise RuntimeError(f"Dependency {dependency} already registered")
         self._dependencies[dependency] = dependency(**kwargs)
 
     def resolve(self, dependency: Callable):

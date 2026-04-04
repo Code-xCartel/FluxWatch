@@ -8,6 +8,8 @@ from flux_watch_api.schema import AccountORM, AccountSessionORM
 from flux_watch_api.utils.auth import AuthUtils
 from flux_watch_api.utils.utilities import extract_auth_user
 
+_MAX_FAILED_ATTEMPTS = 5  # TODO: should move to config
+
 
 class ResidentPlugin(Plugin):
     def __init__(self, repo: Repository, auth_utils: AuthUtils):
@@ -23,17 +25,22 @@ class ResidentPlugin(Plugin):
         except NotFoundError as e:
             raise UnauthorizedError("Invalid credentials") from e
 
-        if not account.is_active and not kwargs.get("skip_active_check", False):
-            raise UnauthorizedError(detail="Account is not active")
-
         if account.is_locked:
             raise UnauthorizedError(detail="Account is locked")
+
+        if not account.is_active and not kwargs.get("skip_active_check", False):
+            raise UnauthorizedError(detail="Account is not active")
 
         if not self._auth_utils.validate_password(
             auth_user.credentials, account.credentials.password_hash
         ):
+            account.failed_login_attempts += 1
+            if account.failed_login_attempts >= _MAX_FAILED_ATTEMPTS:
+                account.is_locked = True
+            self._handler.explicit_commit()
             raise UnauthorizedError(detail="Invalid credentials")
 
+        account.failed_login_attempts = 0
         return self._auth_utils.make_session(account=account)
 
     def extract(self, cred: str) -> AuthUser:

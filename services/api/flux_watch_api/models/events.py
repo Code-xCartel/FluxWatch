@@ -28,9 +28,9 @@ class EventActor(APIModel):
 
 
 class EventContext(APIModel):
-    trace_id: str | None
-    session_id: str | None
-    source: str | None  # e.g., "web", "mobile", "system"
+    trace_id: str | None = None
+    session_id: str | None = None
+    source: str | None = None  # e.g., "web", "mobile", "system"
 
 
 class EventCreate(APIModel):

@@ -4,15 +4,15 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from pathlib import Path
 
-from fastapi import Depends
-
 from flux_watch_api.core.config import AppConfig
+from flux_watch_api.core.registry import registry
 
 logger = logging.getLogger(__name__)
 
 
 class EmailService:
-    def __init__(self, config: AppConfig = Depends()):
+    def __init__(self):
+        config: AppConfig = registry.resolve(AppConfig)
         self.sender_email = config.FWES_SENDER_MAIL
         self.sender_password = config.FWES_SENDER_PASS
 

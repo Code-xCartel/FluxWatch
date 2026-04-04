@@ -25,4 +25,4 @@ def get_event(event_id: str, repo: EventsRepository = Depends()):
     "", tags=["events"], status_code=status.HTTP_200_OK, response_model=ListResponse[Event]
 )
 def get_events(query_params: Query = Depends(), repo: EventsRepository = Depends()):
-    return repo.get_all_events(query_params.as_dict())
+    return repo.get_all_events(**query_params.as_dict())

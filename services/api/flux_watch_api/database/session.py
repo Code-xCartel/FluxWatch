@@ -1,7 +1,6 @@
 import logging
 from collections.abc import Generator
 from enum import Enum
-from typing import Any
 
 from fastapi import Depends
 from sqlalchemy import create_engine, orm
@@ -33,7 +32,7 @@ class Database:
             autocommit=False, autoflush=False, bind=self.engine, expire_on_commit=False
         )
 
-    def get_session(self) -> Generator[orm.Session, Any, None]:
+    def get_session(self) -> Generator[orm.Session, None, None]:
         session = self.session_local()
         try:
             yield session

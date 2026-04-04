@@ -12,6 +12,6 @@ router = APIRouter()
 
 router.include_router(router=health_check_router, tags=["health"])
 router.include_router(router=auth_router, prefix="/auth", tags=["auth"])
-router.include_router(router=api_key_router, prefix="/keys", tags=["events"])
-router.include_router(router=accounts_router, prefix="/account", tags=["events"])
+router.include_router(router=api_key_router, prefix="/keys", tags=["keys"])
+router.include_router(router=accounts_router, prefix="/account", tags=["account"])
 router.include_router(router=events_router, prefix="/events", tags=["events"])

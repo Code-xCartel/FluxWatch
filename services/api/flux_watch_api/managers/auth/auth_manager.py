@@ -126,5 +126,9 @@ class AuthManager:
             raise AlreadyExistsError(detail="New password cannot be same as old password")
 
         account.credentials.password_hash = hashed_pass
+
+        for session in list(account.sessions):
+            self.repo.delete_one(session)
+
         self.repo.add_one(account)
         return True

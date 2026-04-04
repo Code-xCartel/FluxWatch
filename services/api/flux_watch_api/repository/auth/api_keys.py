@@ -22,16 +22,12 @@ class ApiKeysRepository:
     def daily_limit(self):
         return self.repo.app_config.API_KEY_DAILY_LIMIT
 
-    @property
-    def principal(self):
-        return self.repo.session_account.principal
-
     def get_key(self):
-        acc: AccountORM = self.repo.get_one(AccountSearch, {"principal": self.principal})
+        acc: AccountORM = self.repo.get_one(AccountSearch, principal=self.repo.principal)
         return acc.api_key
 
     def generate_new_key(self):
-        acc: AccountORM = self.repo.get_one(AccountSearch, {"principal": self.principal})
+        acc: AccountORM = self.repo.get_one(AccountSearch, principal=self.repo.principal)
 
         now = datetime.now(timezone.utc)
         expires_at = now + timedelta(days=self.repo.app_config.API_KEY_TTL_DAYS)

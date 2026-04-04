@@ -42,9 +42,9 @@ class Redis:
         """Buffer a message and flush to the stream once the buffer is full."""
         self._buffer.append((stream, fields))
         if len(self._buffer) >= REDIS_BUFFER_SIZE:
-            self._flush()
+            self.flush()
 
-    def _flush(self) -> None:
+    def flush(self) -> None:
         if not self._buffer:
             return
         pipe = self.client.pipeline()
