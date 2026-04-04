@@ -29,7 +29,7 @@ class TokenPlugin(Plugin):
             raise UnauthorizedError("Invalid credentials") from e
 
         if not account.is_active and not kwargs.get("skip_active_check", False):
-            raise UnauthorizedError(detail="account is not active")
+            raise UnauthorizedError(detail="Account is not active")
 
         if len(account.sessions) < 1:
             raise UnauthorizedError("Session not found")
