@@ -19,9 +19,9 @@ const AuthLayout: FC = () => {
     return (
         <SidebarProvider>
             <AppSidebar />
-            <main className="flex h-screen flex-1 flex-col">
+            <main className="flex h-screen min-w-0 flex-1 flex-col">
                 <SidebarTrigger className="m-2 shrink-0" />
-                <div className="flex-1 overflow-y-auto">
+                <div className="min-w-0 flex-1 overflow-y-auto">
                     <Outlet />
                 </div>
             </main>
