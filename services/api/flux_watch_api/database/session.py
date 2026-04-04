@@ -23,6 +23,8 @@ class Database:
     def __init__(self, url: str, config: DatabaseConnectionConfig):
         logger.info("Initializing Postgres Engine.")
         try:
+            # Normalise the dialect to psycopg3 regardless of what the URL says
+            url = url.replace("postgresql://", "postgresql+psycopg://", 1)
             self.engine = create_engine(url, **config.value)
             logger.info("Initialized Postgres Engine.")
         except Exception as e:
