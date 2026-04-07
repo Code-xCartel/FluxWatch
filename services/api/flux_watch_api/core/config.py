@@ -31,6 +31,8 @@ class AppConfig:
         ["*"] if _allowed_origins_raw == "*" else _allowed_origins_raw.split(",")
     )
 
+    STREAM_DELAY = get_env("STREAM_DELAY", 5)
+
     @cached_property
     def skip_auth_routes(self):
         return (

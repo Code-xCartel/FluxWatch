@@ -7,6 +7,7 @@ from flux_watch_api.routes.events.events import events_router
 from flux_watch_api.routes.health_check.health_check import (
     health_check_router,
 )
+from flux_watch_api.routes.sse.routes import sse_router
 
 router = APIRouter()
 
@@ -15,3 +16,4 @@ router.include_router(router=auth_router, prefix="/auth", tags=["auth"])
 router.include_router(router=api_key_router, prefix="/keys", tags=["keys"])
 router.include_router(router=accounts_router, prefix="/account", tags=["account"])
 router.include_router(router=events_router, prefix="/events", tags=["events"])
+router.include_router(router=sse_router, prefix="/stream", tags=["sse"])
